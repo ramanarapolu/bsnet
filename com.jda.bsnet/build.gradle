@@ -1,0 +1,95 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'jetty'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.7
+version = '1.0'
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'bsnet', 'Implementation-Version': version
+    }
+}
+project.ext {
+	groovyVersion = '2.0.6'
+	gparsVersion = '0.+'
+	jodaTimeVersion = '2.+'
+	junitVersion = '4.+'
+	commonsCollectionsVersion ='3.+'
+	commonsLangVersion = '3.+'
+	slf4jVersion = '1.7.2'
+	logbackVersion = '1.+'
+	jacksonVersion = '2.+'
+	jerseyVersion = '2.0-m12'
+	jersey1Version = '1.8'
+	jaxRsVersion = "2.0-m15"
+	javaxValidationVersion = "1.1.0.Beta3"
+	jettyVersion = '8.1.9.v20130131'
+	mongoDbVersion = '2.7.2'
+	mongoJacksonMapperVersion = '1.+'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+	compile group:'org.eclipse.jetty.aggregate', name:'jetty-all-server', version:jettyVersion, transitive:false
+	compile group:'org.mortbay.jetty', name:'jetty-setuid-java', version:jettyVersion, transitive:false
+	compile group:'org.mortbay.jetty', name:'jetty-setuid', version:jettyVersion, transitive:false
+
+	compile group:'org.codehaus.gpars', name:'gpars', version:gparsVersion, transitive:false
+
+	compile group:'commons-collections', name: 'commons-collections', version:commonsCollectionsVersion, transitive:false
+	compile group:'org.apache.commons', name:'commons-lang3', version:commonsLangVersion, transitive:false
+	compile group:"joda-time", name:"joda-time", version:jodaTimeVersion, transitive:false
+
+	compile group:'com.fasterxml.jackson.core', name:'jackson-core', version:jacksonVersion, transitive:false
+	compile group:'com.fasterxml.jackson.core', name:'jackson-annotations', version:jacksonVersion, transitive:false
+	compile group:'com.fasterxml.jackson.core', name:'jackson-databind', version:jacksonVersion, transitive:false
+	compile group:'com.fasterxml.jackson.datatype', name:'jackson-datatype-joda', version:jacksonVersion, transitive:false
+
+	compile group:'org.slf4j', name:'slf4j-api', version:slf4jVersion, transitive:false
+
+	compile group:'org.mongodb', name:'mongo-java-driver', version:mongoDbVersion, transitive:false
+	compile group:'net.vz.mongodb.jackson', name:'mongo-jackson-mapper', version:mongoJacksonMapperVersion, transitive:true
+
+	compile group:'org.glassfish.jersey.core', name:'jersey-server', version:jerseyVersion
+	compile group:'org.glassfish.jersey.containers', name:'jersey-container-servlet-core', version:jerseyVersion, transitive:false
+	compile group:'org.glassfish.jersey.media', name:'jersey-media-json', version:'2.+', transitive:true
+	compile group:'org.glassfish.jersey.media', name:'jersey-media-json-jackson', version:jerseyVersion, transitive:true
+	compile group:'org.glassfish.jersey.ext', name:'jersey-servlet-portability', version:jerseyVersion, transitive:false
+	compile group:'javax.ws.rs', name:'javax.ws.rs-api', version:jaxRsVersion, transitive:false
+	compile group:'javax.validation', name:'validation-api', version:javaxValidationVersion, transitive:false
+
+	compile group:'javax.servlet', name:'javax.servlet-api', version:"3.+", transitive:false
+
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+test {
+    systemProperties 'property': 'value'
+}
+jettyRun {
+	httpPort = 8459
+	scanIntervalSeconds = 1
+	contextPath = '/bsnet'
+	daemon = true
+	webAppSourceDirectory = file('src/main/webapp/')
+	webXml = file('src/main/webapp/WEB-INF/web.xml')
+	//daemon = true
+}
+
+jettyStop {
+	stopKey = 'stopKey'
+	stopPort = 8459
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}
