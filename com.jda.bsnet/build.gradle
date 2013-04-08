@@ -1,3 +1,5 @@
+import org.gradle.api.plugins.jetty.internal.Monitor
+
 apply plugin: 'java'
 apply plugin: 'war'
 apply plugin: 'jetty'
@@ -27,6 +29,7 @@ project.ext {
 	jettyVersion = '8.1.9.v20130131'
 	mongoDbVersion = '2.7.2'
 	mongoJacksonMapperVersion = '1.+'
+	yammerVersion = '2.2.0'
 }
 
 repositories {
@@ -34,6 +37,13 @@ repositories {
 }
 
 dependencies {
+
+	compile group:'com.yammer.metrics', name:'metrics-core', version:yammerVersion, transitive:false
+	compile group:'com.yammer.metrics', name:'metrics-servlet', version:yammerVersion, transitive:false
+	compile group:'com.yammer.metrics', name:'metrics-logback', version:yammerVersion, transitive:false
+	compile group:'com.yammer.metrics', name:'metrics-jersey', version:yammerVersion, transitive:false
+	compile group:'com.yammer.metrics', name:'metrics-jetty', version:yammerVersion, transitive:false
+	compile group:'com.yammer.metrics', name:'metrics-annotation', version:yammerVersion, transitive:false
 
 	compile group:'org.eclipse.jetty.aggregate', name:'jetty-all-server', version:jettyVersion, transitive:false
 	compile group:'org.mortbay.jetty', name:'jetty-setuid-java', version:jettyVersion, transitive:false
@@ -75,15 +85,37 @@ jettyRun {
 	httpPort = 8459
 	scanIntervalSeconds = 1
 	contextPath = '/bsnet'
-	daemon = true
+	daemon = false
+	stopKey = 'stopKey'
+	stopPort = 8460
 	webAppSourceDirectory = file('src/main/webapp/')
 	webXml = file('src/main/webapp/WEB-INF/web.xml')
-	//daemon = true
 }
 
+/*jettyRun.doLast {
+	if (getStopPort() != null && getStopPort() > 0 && getStopKey() != null) {
+		Monitor monitor = new Monitor(getStopPort(), getStopKey(), server.getProxiedObject());
+		monitor.start();
+	}
+}*/
+/*[jettyRun, jettyRunWar]*.doLast {
+  *//**
+   * THIS IS A WORKAROUND! THE CURRENT VERSION OF THIS TASK DOESN'T START A WATCHER IN DAEMON MODE
+   *
+   * If starting the monitor fails, it may be because the jetty task was updated to fix this issue
+   * When that happens, we shouldn't need the custom task any more
+   *
+   * Copied From: AbstractJettyRunTask
+   *//*
+   if (getStopPort() != null && getStopPort() > 0 && getStopKey() != null) {
+	  Monitor monitor = new Monitor(getStopPort(), getStopKey(), server.getProxiedObject());
+	  monitor.start();
+   }
+}
+*/
 jettyStop {
 	stopKey = 'stopKey'
-	stopPort = 8459
+	stopPort = 8460
 }
 
 uploadArchives {

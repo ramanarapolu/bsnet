@@ -9,8 +9,7 @@ import javax.ws.rs.core.Application;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.jackson.JacksonFeature;
 
-//import org.glassfish.jersey.filter.LoggingFilter;
-//import org.glassfish.jersey.jackson.JacksonFeature;
+
 
 @ApplicationPath("bsnet")
 class BsnetApiApplication extends Application {
@@ -19,6 +18,7 @@ class BsnetApiApplication extends Application {
 	public Set<Class<?>> getClasses() {
 		final Set<Class<?>> classes = new HashSet<Class<?>>();
 		classes.add(BsnetHello.class);
+		//classes.add(InstrumentedResourceMethodDispatchAdapter.class);
 		return classes;
 	}
 

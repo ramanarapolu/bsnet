@@ -11,10 +11,28 @@
 			<param-name>jersey2#javax.ws.rs.Application</param-name>
 			<param-value>com.jda.bsnet.BsnetApiApplication</param-value>
 		</init-param>
+
+		<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+			<param-value>com.yammer.metrics.jersey</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>metrics</servlet-name>
+		<servlet-class>com.yammer.metrics.reporting.AdminServlet</servlet-class>
+		<init-param>
+			<param-name>show-jvm-metrics</param-name>
+			<param-value>false</param-value>
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>bsnet</servlet-name>
 		<url-pattern>/bsnet/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>metrics</servlet-name>
+		<url-pattern>/metrics/*</url-pattern>
 	</servlet-mapping>
 </web-app>
