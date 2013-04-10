@@ -1,0 +1,5 @@
+{
+  "dbHost": {
+    "dbUri": "mongodb://localhost:27017/bsnet"
+   }
+ }
