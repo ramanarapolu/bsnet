@@ -1,4 +1,4 @@
-package com.jda.bsnet;
+package com.jda.bsnet.rest;
 
 import javax.ws.rs.GET;
 

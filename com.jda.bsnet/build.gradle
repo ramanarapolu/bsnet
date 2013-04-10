@@ -1,9 +1,9 @@
 import org.gradle.api.plugins.jetty.internal.Monitor
-
 apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
 apply plugin: 'war'
 apply plugin: 'jetty'
-apply plugin: 'eclipse'
 
 sourceCompatibility = 1.7
 version = '1.0'
@@ -20,7 +20,7 @@ project.ext {
 	commonsCollectionsVersion ='3.+'
 	commonsLangVersion = '3.+'
 	slf4jVersion = '1.7.2'
-	logbackVersion = '1.+'
+	logbackVersion = '1.0.6'
 	jacksonVersion = '2.+'
 	jerseyVersion = '2.0-m12'
 	jersey1Version = '1.8'
@@ -38,6 +38,7 @@ repositories {
 
 dependencies {
 
+	groovy group:'org.codehaus.groovy', name:'groovy-all', version:groovyVersion, transitive:false
 	compile group:'com.yammer.metrics', name:'metrics-core', version:yammerVersion, transitive:false
 	compile group:'com.yammer.metrics', name:'metrics-servlet', version:yammerVersion, transitive:false
 	compile group:'com.yammer.metrics', name:'metrics-logback', version:yammerVersion, transitive:false
@@ -61,10 +62,14 @@ dependencies {
 	compile group:'com.fasterxml.jackson.datatype', name:'jackson-datatype-joda', version:jacksonVersion, transitive:false
 
 	compile group:'org.slf4j', name:'slf4j-api', version:slf4jVersion, transitive:false
+	runtime group:'ch.qos.logback', name:'logback-core', version:logbackVersion, transitive:false
+	runtime group:'ch.qos.logback', name:'logback-classic', version:logbackVersion, transitive:false
 
 	compile group:'org.mongodb', name:'mongo-java-driver', version:mongoDbVersion, transitive:false
 	compile group:'net.vz.mongodb.jackson', name:'mongo-jackson-mapper', version:mongoJacksonMapperVersion, transitive:true
 
+
+	//compile group:'com.sun.jersey', name:'jersey-bundle', version:'1.9.1'
 	compile group:'org.glassfish.jersey.core', name:'jersey-server', version:jerseyVersion
 	compile group:'org.glassfish.jersey.containers', name:'jersey-container-servlet-core', version:jerseyVersion, transitive:false
 	compile group:'org.glassfish.jersey.media', name:'jersey-media-json', version:'2.+', transitive:true
