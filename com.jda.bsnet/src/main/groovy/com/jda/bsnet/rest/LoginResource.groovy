@@ -42,12 +42,12 @@ class LoginResource {
 		LoginResponse lResp = new LoginResponse()
 		if (userDetails != null) {
 			try {
-				println userDetails.username
-				User user = BsnetDatabase.getInstance().getJacksonDBCollection(User.class).findOne(DBQuery.is("username", userDetails.username))
+				User user = BsnetDatabase.getInstance().getJacksonDBCollection(User.class).findOne(DBQuery.is("username",userDetails.username))
 				if(user != null) {
 					//TODO Hashing of the password
 					if(user.password.equals(userDetails.password)) {
 						String role = determineRole(user)
+						println role
 						if(role != null) {
 							List<MenuUrlPair> menuPairs = getMenusForRole(role)
 							lResp.menuList = menuPairs
@@ -94,12 +94,14 @@ class LoginResource {
 		List<MenuUrlPair> result = new ArrayList()
 		MenuUrlPair mPair = null;
 		try{
-			BsnetDatabase.getInstance().getJacksonDBCollection(MenuMetaData.class).find({roleList:{$in:[role]}}).each { MenuMetaData mData ->
-				mPair = new MenuUrlPair()
-				mPair.displayName = mData.menuName
-				mPair.menuId = mData.menuId
-				mPair.url = mData.menuUrl
-				result.add(mPair)
+			BsnetDatabase.getInstance().getJacksonDBCollection(MenuMetaData.class).find().each { MenuMetaData mData ->
+				if(mData.getRoleList().contains(role)) {
+					mPair = new MenuUrlPair()
+					mPair.displayName = mData.menuName
+					mPair.menuId = mData.menuId
+					mPair.url = mData.menuUrl
+					result.add(mPair)
+				}
 			}
 
 		}catch(MongoException e){

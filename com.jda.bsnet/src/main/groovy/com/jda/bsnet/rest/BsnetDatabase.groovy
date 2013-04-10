@@ -1,8 +1,9 @@
 package com.jda.bsnet.rest;
+import net.vz.mongodb.jackson.DBQuery;
 import net.vz.mongodb.jackson.JacksonDBCollection
 
-import com.jda.bsnet.JsonUtils
-import com.jda.bsnet.server.config.BsnetServerConfig
+import com.jda.bsnet.model.MenuMetaData
+import com.jda.bsnet.uitransfer.MenuUrlPair
 import com.mongodb.DB
 import com.mongodb.Mongo
 import com.mongodb.MongoURI
@@ -37,5 +38,18 @@ class BsnetDatabase {
 		return JacksonDBCollection.wrap(
 		mongoDB.getCollection(clazz.getSimpleName().toLowerCase()),
 		clazz, String.class);
+	}
+	public static void main(String[] args) {
+		System.out.println("runnig client");
+		MenuMetaData mData = BsnetDatabase.getInstance().getJacksonDBCollection(MenuMetaData.class).find({ "roleList :" { $in: ['jdaadmin']}})
+		println mData.menuName
+		/*.each { MenuMetaData mData ->
+
+			println mData.menuName
+			println mData.menuId
+			println mData.menuUrl
+			//printlnadd(mPair)
+		}
+		//BsnetDatabase.getInstance().getJacksonDBCollection(User.class).findOne(DBQuery.is("username","jdauser"))*/
 	}
 }
