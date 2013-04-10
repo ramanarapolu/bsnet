@@ -47,6 +47,14 @@ class LoginResource {
 					//TODO Hashing of the password
 					if(user.password.equals(userDetails.password)) {
 						String role = determineRole(user)
+						if(!role.equals(RoleDef.JDA_ADMIN)) {
+							boolean orgApproved = isOrgApproved(user)
+							if(!orgApproved) {
+								lResp.loginSuccess = false
+								lResp.errorString = " Not allowed to login!! Your organization is not yet approved "
+								return lResp
+							}
+						}
 						println role
 						if(role != null) {
 							List<MenuUrlPair> menuPairs = getMenusForRole(role)
@@ -70,6 +78,22 @@ class LoginResource {
 		return lResp
 	}
 
+	boolean isOrgApproved(User user) {
+		boolean result = false
+		try{
+			if(user.orgName == null) {
+				result = RoleDef.JDA_ADMIN;
+			}else {
+				Organization org = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).findOne(DBQuery.is("orgName", user.orgName))
+				if(org.approved) {
+					result = true
+				}
+			}
+			return result
+		}catch(MongoException e){
+			throw new InternalServerErrorException(e)
+		}
+	}
 	String determineRole(User user) {
 		String result = null
 		try{
