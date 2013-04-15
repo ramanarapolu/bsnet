@@ -1,6 +1,6 @@
 package com.jda.bsnet.model
 
-import net.vz.mongodb.jackson.Id;
+import net.vz.mongodb.jackson.Id
 
 public class User {
 	String _id
@@ -10,4 +10,8 @@ public class User {
 	String mobileNo
 	String orgName
 	boolean orgAdmin
+
+	boolean isOrgAdmin() {
+		return orgAdmin
+	}
 }

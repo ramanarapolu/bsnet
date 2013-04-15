@@ -9,4 +9,17 @@ public class Organization {
 	boolean supplier
 	Address address
 	boolean approved
+
+	boolean isBuyer() {
+		return buyer
+	}
+	boolean isSupplier() {
+		return supplier
+	}
+	boolean isApproved() {
+		return approved
+	}
+
+
 }
+

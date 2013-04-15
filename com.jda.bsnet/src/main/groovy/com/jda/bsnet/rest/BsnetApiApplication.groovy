@@ -15,6 +15,8 @@ class BsnetApiApplication extends Application {
 	public Set<Class<?>> getClasses() {
 		final Set<Class<?>> classes = new HashSet<Class<?>>();
 		classes.add(LoginResource.class);
+		//classes.add(ItemResource.class);
+		classes.add(UserResource.class);
 		classes.add(BsnetHello.class);
 		return classes;
 	}

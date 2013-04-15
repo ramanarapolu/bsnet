@@ -46,6 +46,8 @@ dependencies {
 	compile group:'com.yammer.metrics', name:'metrics-jetty', version:yammerVersion, transitive:false
 	compile group:'com.yammer.metrics', name:'metrics-annotation', version:yammerVersion, transitive:false
 
+	compile group: 'net.sf.supercsv', name:'super-csv', version:'2.0.1'
+
 	compile group:'org.eclipse.jetty.aggregate', name:'jetty-all-server', version:jettyVersion, transitive:false
 	compile group:'org.mortbay.jetty', name:'jetty-setuid-java', version:jettyVersion, transitive:false
 	compile group:'org.mortbay.jetty', name:'jetty-setuid', version:jettyVersion, transitive:false
@@ -69,13 +71,16 @@ dependencies {
 	compile group:'net.vz.mongodb.jackson', name:'mongo-jackson-mapper', version:mongoJacksonMapperVersion, transitive:true
 
 
-	//compile group:'com.sun.jersey', name:'jersey-bundle', version:'1.9.1'
+	//compile group:'com.sun.jersey', name:'jersey-server', version:'1.17.1'
+	//compile group:'org.glassfish.jersey.core', name:'jersey-common', version:'2.0-m12-1'
 	compile group:'org.glassfish.jersey.core', name:'jersey-server', version:jerseyVersion
 	compile group:'org.glassfish.jersey.containers', name:'jersey-container-servlet-core', version:jerseyVersion, transitive:false
+	compile group:'org.glassfish.jersey.media', name:'jersey-media-multipart', version:jerseyVersion, transitive:true
 	compile group:'org.glassfish.jersey.media', name:'jersey-media-json', version:'2.+', transitive:true
 	compile group:'org.glassfish.jersey.media', name:'jersey-media-json-jackson', version:jerseyVersion, transitive:true
 	compile group:'org.glassfish.jersey.ext', name:'jersey-servlet-portability', version:jerseyVersion, transitive:false
 	compile group:'javax.ws.rs', name:'javax.ws.rs-api', version:jaxRsVersion, transitive:false
+	//compile group:'javax.ws.rs', name:'javax.ws.rs-api', version:'2.0-m06', transitive:false
 	compile group:'javax.validation', name:'validation-api', version:javaxValidationVersion, transitive:false
 
 	compile group:'javax.servlet', name:'javax.servlet-api', version:"3.+", transitive:false

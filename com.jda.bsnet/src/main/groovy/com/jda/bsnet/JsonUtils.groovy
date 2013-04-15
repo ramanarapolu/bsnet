@@ -30,4 +30,5 @@ class JsonUtils {
 		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
 		return objectMapper.readValue(new File(fileName), argClass)
 	}
+
 }

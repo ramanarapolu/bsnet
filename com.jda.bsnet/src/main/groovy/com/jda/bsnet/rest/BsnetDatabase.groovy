@@ -1,9 +1,15 @@
 package com.jda.bsnet.rest;
-import net.vz.mongodb.jackson.DBQuery;
 import net.vz.mongodb.jackson.JacksonDBCollection
 
-import com.jda.bsnet.model.MenuMetaData
-import com.jda.bsnet.uitransfer.MenuUrlPair
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.joda.JodaModule
+import com.jda.bsnet.BsnetUtils
+import com.jda.bsnet.model.Address
+import com.jda.bsnet.model.Organization
+import com.jda.bsnet.model.User
+import com.jda.bsnet.uitransfer.UserAndOrg;
+import com.jda.bsnet.uitransfer.UserDetails;
 import com.mongodb.DB
 import com.mongodb.Mongo
 import com.mongodb.MongoURI
@@ -41,8 +47,40 @@ class BsnetDatabase {
 	}
 	public static void main(String[] args) {
 		System.out.println("runnig client");
-		MenuMetaData mData = BsnetDatabase.getInstance().getJacksonDBCollection(MenuMetaData.class).find({ "roleList :" { $in: ['jdaadmin']}})
-		println mData.menuName
+
+		Address addr = new Address()
+		addr.city = 'warangal'
+		addr.country = 'india'
+		addr.postalCode = '500085'
+		addr.state = 'ap'
+		addr.streetAddress = 'Lake View'
+
+
+		Organization org = new Organization()
+		org.orgName = "flipkart"
+		org.address = addr
+		org.approved = false
+		org.buyer = true
+		org.supplier = false
+
+		UserAndOrg user = new UserAndOrg()
+		user.username = "wglbuyer"
+		user.password = BsnetUtils.encrypt("wglbuyer")
+		user.emailId =  "ramana.raps@gmail.com"
+		user.mobileNo = "9989861971"
+		user.org = org
+
+		ObjectMapper objectMapper = new ObjectMapper()
+		objectMapper.registerModule(new JodaModule())
+		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true)
+		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+		StringWriter sw = new StringWriter()
+		objectMapper.writeValue(sw, user)
+
+		println "password 1" + BsnetUtils.encrypt("wglbuyer")
+		println "password 2" + BsnetUtils.encrypt("wglbuyer")
+
+		println sw.toString()
 		/*.each { MenuMetaData mData ->
 
 			println mData.menuName

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+	<display-name>bsnet</display-name>
+	<servlet>
+		<servlet-name>IsPrime</servlet-name>
+		<servlet-class>com.test.metrics.PrimeServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>metrics</servlet-name>
+		<servlet-class>com.yammer.metrics.reporting.AdminServlet</servlet-class>
+		<init-param>
+			<param-name>show-jvm-metrics</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>IsPrime</servlet-name>
+		<url-pattern>/isPrime</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>metrics</servlet-name>
+		<url-pattern>/metrics/*</url-pattern>
+	</servlet-mapping>
+</web-app>

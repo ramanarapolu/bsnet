@@ -14,6 +14,7 @@ import javax.ws.rs.Produces
 
 import net.vz.mongodb.jackson.DBQuery
 
+import com.jda.bsnet.BsnetUtils;
 import com.jda.bsnet.RoleDef
 import com.jda.bsnet.model.MenuMetaData
 import com.jda.bsnet.model.Organization
@@ -45,17 +46,21 @@ class LoginResource {
 				User user = BsnetDatabase.getInstance().getJacksonDBCollection(User.class).findOne(DBQuery.is("username",userDetails.username))
 				if(user != null) {
 					//TODO Hashing of the password
-					if(user.password.equals(userDetails.password)) {
+					println "db : "+user.password 
+					println "give raw :" + userDetails.password
+					println "given :" + BsnetUtils.encrypt(userDetails.password)
+					if(user.password.equals(BsnetUtils.encrypt(userDetails.password))) {
 						String role = determineRole(user)
+						println role
 						if(!role.equals(RoleDef.JDA_ADMIN)) {
 							boolean orgApproved = isOrgApproved(user)
+							println "orgapproved {1}",orgApproved
 							if(!orgApproved) {
 								lResp.loginSuccess = false
 								lResp.errorString = " Not allowed to login!! Your organization is not yet approved "
 								return lResp
 							}
 						}
-						println role
 						if(role != null) {
 							List<MenuUrlPair> menuPairs = getMenusForRole(role)
 							lResp.menuList = menuPairs
@@ -81,13 +86,9 @@ class LoginResource {
 	boolean isOrgApproved(User user) {
 		boolean result = false
 		try{
-			if(user.orgName == null) {
-				result = RoleDef.JDA_ADMIN;
-			}else {
-				Organization org = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).findOne(DBQuery.is("orgName", user.orgName))
-				if(org.approved) {
-					result = true
-				}
+			Organization org = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).findOne(DBQuery.is("orgName", user.orgName))
+			if(org.approved) {
+				result = true
 			}
 			return result
 		}catch(MongoException e){
