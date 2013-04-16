@@ -65,7 +65,7 @@ class BsnetDatabase {
 
 		UserAndOrg user = new UserAndOrg()
 		user.username = "wglbuyer"
-		user.password = BsnetUtils.encrypt("wglbuyer")
+		user.password = "wglbuyer"
 		user.emailId =  "ramana.raps@gmail.com"
 		user.mobileNo = "9989861971"
 		user.org = org
@@ -77,8 +77,8 @@ class BsnetDatabase {
 		StringWriter sw = new StringWriter()
 		objectMapper.writeValue(sw, user)
 
-		println "password 1" + BsnetUtils.encrypt("wglbuyer")
-		println "password 2" + BsnetUtils.encrypt("wglbuyer")
+		//println "password 1" + BsnetUtils.encrypt("wglbuyer")
+	//	println "password 2" + BsnetUtils.encrypt("wglbuyer")
 
 		println sw.toString()
 		/*.each { MenuMetaData mData ->

@@ -4,6 +4,18 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
 	<display-name>bsnet</display-name>
+	<!-- filter>
+    <filter-name>SessionFilter</filter-name>
+    <filter-class>
+        com.jda.bsnet.servlet.SessionFilterServlet
+    </filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>SessionFilter</filter-name>
+    <url-pattern>/bsnet/user/*</url-pattern>
+    <url-pattern>/bsnet/login/*</url-pattern>
+    <url-pattern>/bsnet/item/*</url-pattern>
+  </filter-mapping>-->
 	<servlet>
 		<servlet-name>bsnet</servlet-name>
 		<servlet-class>org.glassfish.jersey.servlet.portability.PortableServletContainer</servlet-class>

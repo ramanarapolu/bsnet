@@ -2,19 +2,18 @@ package com.jda.bsnet.rest;
 
 import static javax.ws.rs.core.MediaType.*
 
-
-
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpSession
 import javax.ws.rs.Consumes
-import javax.ws.rs.GET;
+import javax.ws.rs.GET
 import javax.ws.rs.InternalServerErrorException
-import javax.ws.rs.NotAcceptableException
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
+import javax.ws.rs.core.Context
 
 import net.vz.mongodb.jackson.DBQuery
 
-import com.jda.bsnet.BsnetUtils;
 import com.jda.bsnet.RoleDef
 import com.jda.bsnet.model.MenuMetaData
 import com.jda.bsnet.model.Organization
@@ -39,32 +38,33 @@ class LoginResource {
 	@Path("logon")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
-	LoginResponse logOn(UserDetails userDetails) {
+	LoginResponse logOn(@Context HttpServletRequest req ,UserDetails userDetails) {
 		LoginResponse lResp = new LoginResponse()
 		if (userDetails != null) {
 			try {
 				User user = BsnetDatabase.getInstance().getJacksonDBCollection(User.class).findOne(DBQuery.is("username",userDetails.username))
 				if(user != null) {
 					//TODO Hashing of the password
-					println "db : "+user.password 
-					println "give raw :" + userDetails.password
-					println "given :" + BsnetUtils.encrypt(userDetails.password)
-					if(user.password.equals(BsnetUtils.encrypt(userDetails.password))) {
+					if(user.password.equals(userDetails.password)) {
 						String role = determineRole(user)
 						println role
 						if(!role.equals(RoleDef.JDA_ADMIN)) {
 							boolean orgApproved = isOrgApproved(user)
-							println "orgapproved {1}",orgApproved
+							//println "orgapproved {1}",orgApproved
 							if(!orgApproved) {
 								lResp.loginSuccess = false
 								lResp.errorString = " Not allowed to login!! Your organization is not yet approved "
 								return lResp
 							}
+
 						}
 						if(role != null) {
 							List<MenuUrlPair> menuPairs = getMenusForRole(role)
 							lResp.menuList = menuPairs
 							lResp.loginSuccess = true
+
+							HttpSession session = req.getSession(true);
+							session.setAttribute("orgName", user.orgName)
 						}
 
 					}else {

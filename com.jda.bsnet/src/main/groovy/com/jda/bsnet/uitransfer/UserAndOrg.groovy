@@ -9,6 +9,8 @@ class UserAndOrg {
 	String mobileNo
 	Organization org
 	boolean success
+	String failedReason
+
 
 	boolean isSuccess() {
 		return success
