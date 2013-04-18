@@ -33,7 +33,6 @@ class UserResource {
 	String getHello(){
 		return "Hello"
 	}
-
 	@POST
 	@Path("create")
 	@Consumes(APPLICATION_JSON)
@@ -87,14 +86,11 @@ class UserResource {
 			}
 		}
 	}
-
-
 	@POST
 	@Path("createUser")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
 	Response createUser(@Context HttpServletRequest req,User userDetails) {
-
 		if (userDetails != null)
 		{
 			try
@@ -102,13 +98,11 @@ class UserResource {
 				// Get the organization name from the session
 				HttpSession session = req.getSession()
 				String orgName = session.getAttribute("orgName")
-				System.out.println("Org returned :"+orgName);
 				//return result.getSavedObject();
 				User user = new User()
 				user.emailId = userDetails.emailId
 				user.username = userDetails.username
 				user.password = userDetails.password
-				user.orgAdmin = true
 				user.orgName = orgName
 				user.mobileNo = userDetails.mobileNo
 
@@ -132,7 +126,7 @@ class UserResource {
 		List<Organization> orgs = null
 		Organization org = null
 		try {
-			DBCursor<Organization> orgCur = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).find(DBQuery.is("approved",false))
+			DBCursor<Organization> orgCur = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).find()//(DBQuery.is("approved",false))
 			if(orgCur != null) {
 				orgs = new ArrayList()
 				while(orgCur.hasNext()){
@@ -156,10 +150,36 @@ class UserResource {
 				BasicDBObject newDocument = new BasicDBObject();
 				newDocument.append('$set', new BasicDBObject().append("approved", true));
 				BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).update(source,newDocument)
+				// Send mail to orgAdmin saying you org approved ???
 			}catch(MongoException e){
 				throw new InternalServerErrorException(e)
 			}
 		}
 		return Response.ok().build()
 	}
+
+	@POST
+	@Path("getUserByOrg")
+	@Consumes(APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
+	List<User> getUserByOrgs(@Context HttpServletRequest req) {
+
+		HttpSession session = req.getSession()
+		String orgName = session.getAttribute("orgName")
+		List<User> users = null
+		User user = null
+		DBCursor<User> userCur = BsnetDatabase.getInstance().getJacksonDBCollection(User.class).find(DBQuery.is("orgName",orgName))
+		if(userCur != null) {
+			users = new ArrayList()
+			while(userCur.hasNext()){
+				user = (User) userCur.next()
+				if(!user.orgAdmin)
+					users.add(user)
+			}
+		}
+		return users
+	}
+
+
+
 }

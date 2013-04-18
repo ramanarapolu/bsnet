@@ -47,6 +47,7 @@ dependencies {
 	compile group:'com.yammer.metrics', name:'metrics-annotation', version:yammerVersion, transitive:false
 
 	compile group: 'net.sf.supercsv', name:'super-csv', version:'2.0.1'
+	compile group: 'javax.mail', name:'mail', version:'1.4.7'
 
 	compile group:'org.eclipse.jetty.aggregate', name:'jetty-all-server', version:jettyVersion, transitive:false
 	compile group:'org.mortbay.jetty', name:'jetty-setuid-java', version:jettyVersion, transitive:false
@@ -100,7 +101,11 @@ jettyRun {
 	stopPort = 8460
 	webAppSourceDirectory = file('src/main/webapp/')
 	webXml = file('src/main/webapp/WEB-INF/web.xml')
+	additionalRuntimeJars = files('src/main/webapp/WEB-INF/classes')
 }
+
+
+
 
 /*jettyRun.doLast {
 	if (getStopPort() != null && getStopPort() > 0 && getStopKey() != null) {

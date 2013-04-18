@@ -1,6 +1,9 @@
 package com.jda.bsnet.rest;
 
 import static javax.ws.rs.core.MediaType.*
+
+import java.util.List;
+
 import groovyx.gpars.GParsPool
 
 import javax.ws.rs.Consumes
@@ -12,6 +15,7 @@ import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
+import net.vz.mongodb.jackson.DBCursor
 import net.vz.mongodb.jackson.WriteResult
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition
@@ -21,6 +25,7 @@ import com.jda.bsnet.CsvUtils
 import com.jda.bsnet.csv.CsvBatch
 import com.jda.bsnet.csv.CsvBatchTaskCallable
 import com.jda.bsnet.model.Item
+import com.jda.bsnet.model.SupplierItem;
 import com.mongodb.MongoException
 
 @Path("/item")
@@ -60,7 +65,7 @@ class ItemResource {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(APPLICATION_JSON)
 	Response createBulkItems(@FormDataParam("file") InputStream uploadedInputStream,
-		@FormDataParam("file") FormDataContentDisposition fileDetail) {
+			@FormDataParam("file") FormDataContentDisposition fileDetail) {
 
 		long startTime = System.currentTimeMillis();
 		int totalRows = -1;
@@ -87,7 +92,8 @@ class ItemResource {
 				batchList.add(callable)
 			}
 			GParsPool.withPool(CsvUtils.MAX_THREAD_POOL_SIZE) {
-				batchList.eachParallel{CsvBatchTaskCallable callable ->;
+				batchList.eachParallel{CsvBatchTaskCallable callable ->
+					;
 					callable.executeBatch()
 				}
 			}
@@ -97,5 +103,47 @@ class ItemResource {
 		return Response.ok().build()
 	}
 
+	@GET
+	@Path("getAllItems")
+	@Produces(APPLICATION_JSON)
+	List<Item> getAllItems() {
 
+		List<Item> items = null
+		Item item = null
+		try {
+			DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find()//(DBQuery.is("approved",false))
+			if(itemCur != null) {
+				item = new ArrayList()
+				while(orgCur.hasNext()){
+					item = (Item) itemCur.next();
+					items.add(item)
+				}
+			}
+		}catch(MongoException e){
+			throw new InternalServerErrorException(e)
+		}
+		return items
+	}
+
+	@POST
+	@Path("getSuppliers")
+	@Produces(APPLICATION_JSON)
+	@Consumes(APPLICATION_JSON)
+	List<SupplierItem> getSuppliers(String itemName) {
+		List<SupplierItem> suppliers = null
+		SupplierItem supplier = null
+		try {
+			DBCursor<SupplierItem> supCur = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).find(DBQuery.is("item",itemName))
+			if(supCur != null) {
+				suppliers = new ArrayList()
+				while(supCur.hasNext()){
+					supplier = (SupplierItem) supCur.next()
+					suppliers.add(supplier)
+				}
+			}
+		}catch(MongoException e){
+			throw new InternalServerErrorException(e)
+		}
+		return suppliers
+	}
 }

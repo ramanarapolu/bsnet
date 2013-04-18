@@ -2,6 +2,7 @@ package com.jda.bsnet.rest;
 
 import static javax.ws.rs.core.MediaType.*
 
+import javax.annotation.Resource
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import javax.ws.rs.Consumes
@@ -14,6 +15,8 @@ import javax.ws.rs.core.Context
 
 import net.vz.mongodb.jackson.DBQuery
 
+import org.glassfish.jersey.server.ResourceConfig
+
 import com.jda.bsnet.RoleDef
 import com.jda.bsnet.model.MenuMetaData
 import com.jda.bsnet.model.Organization
@@ -25,6 +28,9 @@ import com.mongodb.MongoException
 
 @Path("/login")
 class LoginResource {
+
+
+
 
 	@GET
 	@Path("hello")

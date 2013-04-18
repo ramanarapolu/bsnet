@@ -1,15 +1,15 @@
 package com.jda.bsnet.rest;
 import net.vz.mongodb.jackson.JacksonDBCollection
 
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
-import com.jda.bsnet.BsnetUtils
+import com.jda.bsnet.JsonUtils
 import com.jda.bsnet.model.Address
 import com.jda.bsnet.model.Organization
-import com.jda.bsnet.model.User
-import com.jda.bsnet.uitransfer.UserAndOrg;
-import com.jda.bsnet.uitransfer.UserDetails;
+import com.jda.bsnet.server.config.BsnetServerConfig
+import com.jda.bsnet.uitransfer.UserAndOrg
 import com.mongodb.DB
 import com.mongodb.Mongo
 import com.mongodb.MongoURI
@@ -18,14 +18,19 @@ import com.mongodb.MongoURI
 class BsnetDatabase {
 	private DB mongoDB;
 	private static BsnetDatabase instance = new BsnetDatabase();
+	private BsnetServerConfig bConfig = null
+	Properties bsnetProp = new Properties()
 	public static BsnetDatabase getInstance() {
 		return instance;
 	}
 
 	private BsnetDatabase() {
 		try {
-		//	BsnetServerConfig bConfig = JsonUtils.readFromJsonFile("./src/main/resources/bsnetserver.json", BsnetServerConfig.class)
-			MongoURI mongolabUri = new MongoURI("mongodb://localhost:27017/bsnet")
+			//bConfig = JsonUtils.readFromJsonFile("bsnet/bsnetserver.json", BsnetServerConfig.class)
+			//MongoURI mongolabUri = new MongoURI(bConfig.host.dbUri)
+			InputStream is = BsnetDatabase.class.getResourceAsStream("/bsnetserver.properties")
+			bsnetProp.load(is)
+			MongoURI mongolabUri = new MongoURI(bsnetProp.get("dbUri"))
 			Mongo m = new Mongo(mongolabUri);
 			mongoDB = m.getDB(mongolabUri.getDatabase());
 			if ((mongolabUri.getUsername() != null)
@@ -44,6 +49,10 @@ class BsnetDatabase {
 		return JacksonDBCollection.wrap(
 		mongoDB.getCollection(clazz.getSimpleName().toLowerCase()),
 		clazz, String.class);
+	}
+
+	public Properties getBsnetServerConfig(){
+		return bsnetProp
 	}
 	public static void main(String[] args) {
 		System.out.println("runnig client");
@@ -78,16 +87,15 @@ class BsnetDatabase {
 		objectMapper.writeValue(sw, user)
 
 		//println "password 1" + BsnetUtils.encrypt("wglbuyer")
-	//	println "password 2" + BsnetUtils.encrypt("wglbuyer")
+		//	println "password 2" + BsnetUtils.encrypt("wglbuyer")
 
 		println sw.toString()
 		/*.each { MenuMetaData mData ->
-
-			println mData.menuName
-			println mData.menuId
-			println mData.menuUrl
-			//printlnadd(mPair)
-		}
-		//BsnetDatabase.getInstance().getJacksonDBCollection(User.class).findOne(DBQuery.is("username","jdauser"))*/
+		 println mData.menuName
+		 println mData.menuId
+		 println mData.menuUrl
+		 //printlnadd(mPair)
+		 }
+		 //BsnetDatabase.getInstance().getJacksonDBCollection(User.class).findOne(DBQuery.is("username","jdauser"))*/
 	}
 }
