@@ -34,7 +34,7 @@ public class SessionFilterServlet implements Filter {
 		System.out.println("Passed URL :" +url);
 		lgr.log(Level.INFO, "Displaying URL :" + url + " method :" + url);
 		try {
-			if ((url.indexOf(contextURL+"user/create") != -1) && (url.indexOf(contextURL+"login/logon") != -1) && (url.indexOf(contextURL+"bsnet/index.html")!= -1)) {
+			if ((url.indexOf(contextURL+"user/create") != -1) || (url.indexOf(contextURL+"login/logon") != -1) || (url.indexOf(contextURL+"bsnet/index.html")!= -1)) {
 				allowedRequest = true;
 				chain.doFilter(req, res);
 			}
@@ -42,7 +42,7 @@ public class SessionFilterServlet implements Filter {
 			if (!allowedRequest) {
 				HttpSession session = request.getSession(false);
 				if (null == session) {
-					response.sendRedirect("index.html");
+					response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/index.html") );
 				} else {
 					// System.out.println("session not null "+session.getMaxInactiveInterval());
 					// As the session is available we need to allow
@@ -53,13 +53,11 @@ public class SessionFilterServlet implements Filter {
 			PrintWriter writer = getWriter(response);
 			if (writer == null)
 				return;
-			lgr.log(Level.SEVERE, "IOException", e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch (ServletException e) {
 			PrintWriter writer = getWriter(response);
 			if (writer == null)
 				return;
-			lgr.log(Level.SEVERE, "CIMIXException", e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -72,7 +70,6 @@ public class SessionFilterServlet implements Filter {
 		try {
 			return response.getWriter();
 		} catch (IOException e) {
-			lgr.log(Level.SEVERE, "CIMIXException", e);
 			return null;
 		}
 	}

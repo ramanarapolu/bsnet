@@ -20,7 +20,7 @@ project.ext {
 	commonsCollectionsVersion ='3.+'
 	commonsLangVersion = '3.+'
 	slf4jVersion = '1.7.2'
-	logbackVersion = '1.0.6'
+	logbackVersion = '1.0.11'
 	jacksonVersion = '2.+'
 	jerseyVersion = '2.0-m12'
 	jersey1Version = '1.8'
@@ -65,6 +65,7 @@ dependencies {
 	compile group:'com.fasterxml.jackson.datatype', name:'jackson-datatype-joda', version:jacksonVersion, transitive:false
 
 	compile group:'org.slf4j', name:'slf4j-api', version:slf4jVersion, transitive:false
+	//compile group:'org.apache.logging.log4j', name:'log4j-api', version:'2.0-beta4', transitive:false
 	runtime group:'ch.qos.logback', name:'logback-core', version:logbackVersion, transitive:false
 	runtime group:'ch.qos.logback', name:'logback-classic', version:logbackVersion, transitive:false
 
@@ -89,6 +90,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.+'
 }
 
+
 test {
     systemProperties 'property': 'value'
 }
@@ -101,10 +103,11 @@ jettyRun {
 	stopPort = 8460
 	webAppSourceDirectory = file('src/main/webapp/')
 	webXml = file('src/main/webapp/WEB-INF/web.xml')
-	additionalRuntimeJars = files('src/main/webapp/WEB-INF/classes')
 }
 
-
+configurations {
+	all*.exclude(group: 'ch.qos.logback', module: 'logback-classic-1.0.6.jar')
+}
 
 
 /*jettyRun.doLast {

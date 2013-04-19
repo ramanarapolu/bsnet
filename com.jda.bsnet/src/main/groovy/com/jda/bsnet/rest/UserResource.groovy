@@ -2,6 +2,7 @@ package com.jda.bsnet.rest;
 
 import static javax.ws.rs.core.MediaType.*
 
+
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import javax.ws.rs.Consumes
@@ -17,6 +18,7 @@ import net.vz.mongodb.jackson.DBCursor
 import net.vz.mongodb.jackson.DBQuery
 import net.vz.mongodb.jackson.WriteResult
 
+import com.jda.bsnet.BsnetUtils;
 import com.jda.bsnet.model.Organization
 import com.jda.bsnet.model.User
 import com.jda.bsnet.uitransfer.UserAndOrg
@@ -33,12 +35,12 @@ class UserResource {
 	String getHello(){
 		return "Hello"
 	}
+
 	@POST
 	@Path("create")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
 	UserAndOrg createOrgAndUser(UserAndOrg userOrgDetails) {
-
 		Organization org = null
 		User user = null
 		if (userOrgDetails != null)
@@ -71,7 +73,7 @@ class UserResource {
 				user = new User()
 				user.emailId = userOrgDetails.emailId
 				user.username = userOrgDetails.username
-				user.password = userOrgDetails.password
+				user.password = BsnetUtils.encrypt(userOrgDetails.password)
 				user.orgAdmin = true
 				user.orgName = org.orgName
 				user.mobileNo = userOrgDetails.mobileNo
@@ -82,6 +84,7 @@ class UserResource {
 			}
 			catch(MongoException e)
 			{
+				e.printStackTrace()
 				throw new InternalServerErrorException(e)
 			}
 		}
@@ -102,7 +105,7 @@ class UserResource {
 				User user = new User()
 				user.emailId = userDetails.emailId
 				user.username = userDetails.username
-				user.password = userDetails.password
+				user.password = BsnetUtils.encrypt(userDetails.password)
 				user.orgName = orgName
 				user.mobileNo = userDetails.mobileNo
 
@@ -158,7 +161,7 @@ class UserResource {
 		return Response.ok().build()
 	}
 
-	@POST
+	@GET
 	@Path("getUserByOrg")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
@@ -166,6 +169,7 @@ class UserResource {
 
 		HttpSession session = req.getSession()
 		String orgName = session.getAttribute("orgName")
+		System.out.println("organization name :"+orgName);
 		List<User> users = null
 		User user = null
 		DBCursor<User> userCur = BsnetDatabase.getInstance().getJacksonDBCollection(User.class).find(DBQuery.is("orgName",orgName))
@@ -173,8 +177,9 @@ class UserResource {
 			users = new ArrayList()
 			while(userCur.hasNext()){
 				user = (User) userCur.next()
-				if(!user.orgAdmin)
+				if(!user.orgAdmin) {
 					users.add(user)
+				}
 			}
 		}
 		return users

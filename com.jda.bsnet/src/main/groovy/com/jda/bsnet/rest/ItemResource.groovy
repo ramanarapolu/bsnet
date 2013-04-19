@@ -1,9 +1,7 @@
 package com.jda.bsnet.rest;
 
 import static javax.ws.rs.core.MediaType.*
-
-import java.util.List;
-
+import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 
 import javax.ws.rs.Consumes
@@ -16,6 +14,7 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 import net.vz.mongodb.jackson.DBCursor
+import net.vz.mongodb.jackson.DBQuery
 import net.vz.mongodb.jackson.WriteResult
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition
@@ -25,11 +24,15 @@ import com.jda.bsnet.CsvUtils
 import com.jda.bsnet.csv.CsvBatch
 import com.jda.bsnet.csv.CsvBatchTaskCallable
 import com.jda.bsnet.model.Item
-import com.jda.bsnet.model.SupplierItem;
+import com.jda.bsnet.model.SupplierItem
 import com.mongodb.MongoException
 
 @Path("/item")
+@Slf4j
 class ItemResource {
+
+
+
 
 	@GET
 	@Path("hello")
@@ -51,10 +54,7 @@ class ItemResource {
 				WriteResult<Item, String> result = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).insert(item)
 				return result.getSavedObject();
 			}catch(MongoException e){
-				throw new InternalServerErrorException(e)
-			}
-			catch(MongoException e)
-			{
+				e.printStackTrace()
 				throw new InternalServerErrorException(e)
 			}
 		}
@@ -107,14 +107,14 @@ class ItemResource {
 	@Path("getAllItems")
 	@Produces(APPLICATION_JSON)
 	List<Item> getAllItems() {
-
+		log.info "Entered getAll Items method"
 		List<Item> items = null
 		Item item = null
 		try {
 			DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find()//(DBQuery.is("approved",false))
 			if(itemCur != null) {
-				item = new ArrayList()
-				while(orgCur.hasNext()){
+				items = new ArrayList()
+				while(itemCur.hasNext()){
 					item = (Item) itemCur.next();
 					items.add(item)
 				}

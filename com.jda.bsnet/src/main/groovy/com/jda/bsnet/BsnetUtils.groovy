@@ -11,7 +11,9 @@ import javax.mail.internet.MimeMessage
 
 import sun.misc.BASE64Encoder
 
+import com.jda.bsnet.model.User
 import com.jda.bsnet.rest.BsnetDatabase
+import com.mongodb.BasicDBObject
 
 
 class BsnetUtils {
@@ -33,7 +35,18 @@ class BsnetUtils {
 		return hash; //step 6
 	}
 
-	public static boolean sendMail(String toAddresses,String subject,String body)
+	static String getAdminMailId(String orgName) {
+		BasicDBObject andQuery = new BasicDBObject();
+		List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+		obj.add(new BasicDBObject("orgName", orgName));
+		obj.add(new BasicDBObject("orgAdmin", true));
+		andQuery.put('$and', obj);
+		User user = BsnetDatabase.getInstance().getJacksonDBCollection(User.class).findOne(andQuery)
+		return user.emailId
+	}
+
+
+	static boolean sendMail(String toAddresses,String subject,String body)
 	{
 		boolean status=true;
 		Properties bsnetProp = BsnetDatabase.getInstance().getBsnetServerConfig()

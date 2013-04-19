@@ -2,7 +2,6 @@ package com.jda.bsnet.rest;
 
 import static javax.ws.rs.core.MediaType.*
 
-import javax.annotation.Resource
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import javax.ws.rs.Consumes
@@ -15,8 +14,7 @@ import javax.ws.rs.core.Context
 
 import net.vz.mongodb.jackson.DBQuery
 
-import org.glassfish.jersey.server.ResourceConfig
-
+import com.jda.bsnet.BsnetUtils
 import com.jda.bsnet.RoleDef
 import com.jda.bsnet.model.MenuMetaData
 import com.jda.bsnet.model.Organization
@@ -51,9 +49,8 @@ class LoginResource {
 				User user = BsnetDatabase.getInstance().getJacksonDBCollection(User.class).findOne(DBQuery.is("username",userDetails.username))
 				if(user != null) {
 					//TODO Hashing of the password
-					if(user.password.equals(userDetails.password)) {
+					if(user.password.equals(BsnetUtils.encrypt(userDetails.password))) {
 						String role = determineRole(user)
-						println role
 						if(!role.equals(RoleDef.JDA_ADMIN)) {
 							boolean orgApproved = isOrgApproved(user)
 							//println "orgapproved {1}",orgApproved

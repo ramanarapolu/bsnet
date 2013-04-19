@@ -1,15 +1,11 @@
 package com.jda.bsnet.rest;
 import net.vz.mongodb.jackson.JacksonDBCollection
 
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
-import com.jda.bsnet.JsonUtils
-import com.jda.bsnet.model.Address
-import com.jda.bsnet.model.Organization
+import com.jda.bsnet.model.Item
 import com.jda.bsnet.server.config.BsnetServerConfig
-import com.jda.bsnet.uitransfer.UserAndOrg
 import com.mongodb.DB
 import com.mongodb.Mongo
 import com.mongodb.MongoURI
@@ -57,7 +53,7 @@ class BsnetDatabase {
 	public static void main(String[] args) {
 		System.out.println("runnig client");
 
-		Address addr = new Address()
+	/*	Address addr = new Address()
 		addr.city = 'warangal'
 		addr.country = 'india'
 		addr.postalCode = '500085'
@@ -77,19 +73,28 @@ class BsnetDatabase {
 		user.password = "wglbuyer"
 		user.emailId =  "ramana.raps@gmail.com"
 		user.mobileNo = "9989861971"
-		user.org = org
+		user.org = org*/
+
+		Item item = new Item()
+
+		item.category = "shoe"
+		item.description = "Noke Shoe"
+		item.itemName = "Nike shoe"
+		item.price = 250.56
+		item.imageUrl = "http://argo.com/nike.img"
 
 		ObjectMapper objectMapper = new ObjectMapper()
 		objectMapper.registerModule(new JodaModule())
 		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true)
 		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
 		StringWriter sw = new StringWriter()
-		objectMapper.writeValue(sw, user)
+		objectMapper.writeValue(sw, item)
+		println sw.toString()
 
 		//println "password 1" + BsnetUtils.encrypt("wglbuyer")
 		//	println "password 2" + BsnetUtils.encrypt("wglbuyer")
 
-		println sw.toString()
+
 		/*.each { MenuMetaData mData ->
 		 println mData.menuName
 		 println mData.menuId
@@ -97,5 +102,11 @@ class BsnetDatabase {
 		 //printlnadd(mPair)
 		 }
 		 //BsnetDatabase.getInstance().getJacksonDBCollection(User.class).findOne(DBQuery.is("username","jdauser"))*/
+		/*User user = new User()
+		user.username = "jdauser"
+		user.password = BsnetUtils.encrypt("jdauser")
+		user.emailId = "ramana.raps@gmail.com"
+		user.mobileNo = "9989861970"
+		BsnetDatabase.getInstance().getJacksonDBCollection(User.class).insert(user)*/
 	}
 }

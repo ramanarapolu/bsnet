@@ -107,7 +107,7 @@ class SupplierItemResource {
 		String orgName = session.getAttribute("orgName")
 		bsRelationList.each { BSRelationState bs ->
 			Organization buyerOrg = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).findOne(DBQuery.is("orgName",bs.buyerName))
-			String adminMailId = buyerOrg.getAdminMailId()
+			String adminMailId = BsnetUtils.getAdminMailId(buyerOrg.orgName)
 			Properties bsNetProp = BsnetDatabase.getInstance().getBsnetServerConfig()
 			String body=bsNetProp.get("email.reqbuyer.body").toString();
 			String approveLink = bsNetProp.get("bsnet.server.url").toString();
