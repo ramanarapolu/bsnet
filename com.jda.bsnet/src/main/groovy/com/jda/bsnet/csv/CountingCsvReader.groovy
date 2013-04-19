@@ -2,7 +2,8 @@ package com.jda.bsnet.csv
 
 import org.supercsv.io.AbstractCsvReader
 import org.supercsv.prefs.CsvPreference
-
+import java.io.IOException;
+import java.io.Reader;
 
 public class CountingCsvReader extends AbstractCsvReader {
 

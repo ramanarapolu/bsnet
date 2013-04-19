@@ -14,16 +14,18 @@ public class CsvUtils {
 	public static final int QUEUE_SIZE = 1000;
 
 
-	public static int getRowCount(InputStream inStream) {
+	public static int getRowCount(String file) {
 		int rowCount = 0;
 		int csvReaderRowCount = 0;
 		BufferedReader reader = null;
 		CountingCsvReader csvMapReader = null;
 		try {
-			reader = new BufferedReader(inStream);
+			println " counting num of lines in csv"
+			reader = new BufferedReader(new FileReader(file));
 			csvMapReader = new CountingCsvReader(reader,
 					CsvPreference.STANDARD_PREFERENCE);
 			String[] header = csvMapReader.getHeader(true);
+			println "Header in count reader :"+ header.toString()
 			for (; csvMapReader.readRow(); ++rowCount) {
 				// Do nothing just increment rowCount;
 			}
@@ -47,5 +49,20 @@ public class CsvUtils {
 		}
 		return rowCount;
 	}
+
+	public static void main(String[] args) {
+		String csvFileLocation = "C:\\tmp\\items.csv";
+		long start = System.currentTimeMillis();
+		int iterations = 1000;
+		//for (int i = 0; i < iterations; ++i) {
+			int rowCount = getRowCount(csvFileLocation);
+			// logger.info("There are " + rowCount + " rows in file: "
+			// + csvFileLocation);
+		//}
+		System.out.println("Row count :"+rowCount);
+		long end = System.currentTimeMillis();
+		long timeTaken = end - start;
+	}
+
 
 }

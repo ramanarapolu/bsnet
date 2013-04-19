@@ -66,15 +66,15 @@ class ItemResource {
 	@Produces(APPLICATION_JSON)
 	Response createBulkItems(@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail) {
-
+		String uploadedFileLocation = BsnetDatabase.getInstance().getBsnetProp().getProperty("bsnet.itemfile.loc") + fileDetail.getFileName();
+		saveToFile(uploadedInputStream, uploadedFileLocation);
 		long startTime = System.currentTimeMillis();
 		int totalRows = -1;
 		int numBatches = -1;
 		try {
-			//String insertSql = getInsertSql(this.tableName, this.connectionPool);
 			int startRow = 0;
 			int endRow = 0;
-			totalRows = CsvUtils.getRowCount(uploadedInputStream);
+			totalRows = CsvUtils.getRowCount(uploadedFileLocation);
 			numBatches = totalRows % CsvUtils.BATCH_SIZE == 0 ? (totalRows
 					/ CsvUtils.BATCH_SIZE)
 					: (totalRows / CsvUtils.BATCH_SIZE + 1);
@@ -85,7 +85,7 @@ class ItemResource {
 				if (endRow > totalRows) {
 					endRow = totalRows;
 				}
-				CsvBatch csvBatch = new CsvBatch(uploadedInputStream, startRow, endRow,
+				CsvBatch csvBatch = new CsvBatch(uploadedFileLocation, startRow, endRow,
 						CsvUtils.BATCH_SIZE);
 				CsvBatchTaskCallable callable = new CsvBatchTaskCallable(
 						csvBatch);
@@ -93,12 +93,11 @@ class ItemResource {
 			}
 			GParsPool.withPool(CsvUtils.MAX_THREAD_POOL_SIZE) {
 				batchList.eachParallel{CsvBatchTaskCallable callable ->
-					;
 					callable.executeBatch()
 				}
 			}
 		} finally {
-			// log
+			new File(uploadedFileLocation).delete()
 		}
 		return Response.ok().build()
 	}
@@ -145,5 +144,27 @@ class ItemResource {
 			throw new InternalServerErrorException(e)
 		}
 		return suppliers
+	}
+
+	// save uploaded file to new location
+	private void saveToFile(InputStream uploadedInputStream,
+		String uploadedFileLocation) {
+
+		try {
+			OutputStream out = null;
+			int read = 0;
+			byte[] bytes = new byte[1024];
+
+			out = new FileOutputStream(new File(uploadedFileLocation));
+			while ((read = uploadedInputStream.read(bytes)) != -1) {
+				out.write(bytes, 0, read);
+			}
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+
 	}
 }

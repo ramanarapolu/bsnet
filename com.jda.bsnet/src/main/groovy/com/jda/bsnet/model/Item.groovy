@@ -6,7 +6,7 @@ class Item {
 	String _id
 	String itemName
 	String description
-	Long price
+	Double price
 	String imageUrl
 	String category
 	@JsonIgnore

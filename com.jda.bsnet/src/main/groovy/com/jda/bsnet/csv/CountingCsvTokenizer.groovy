@@ -43,8 +43,9 @@ public class CountingCsvTokenizer extends AbstractTokenizer {
 	 */
 	public boolean readColumns(final List<String> columns) throws IOException {
 		// keep reading lines until data is found
-		String line;
-		while(line.length()==0) {
+		String line = readLine();
+
+		while(line?.length()==0) {
 			line = readLine();
 			if (line == null) {
 				return false; // EOF

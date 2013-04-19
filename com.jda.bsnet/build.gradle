@@ -49,6 +49,8 @@ dependencies {
 	compile group: 'net.sf.supercsv', name:'super-csv', version:'2.0.1'
 	compile group: 'javax.mail', name:'mail', version:'1.4.7'
 
+	compile group:'org.codehaus.gpars', name:'gpars', version:'0.12'
+
 	compile group:'org.eclipse.jetty.aggregate', name:'jetty-all-server', version:jettyVersion, transitive:false
 	compile group:'org.mortbay.jetty', name:'jetty-setuid-java', version:jettyVersion, transitive:false
 	compile group:'org.mortbay.jetty', name:'jetty-setuid', version:jettyVersion, transitive:false
@@ -104,11 +106,6 @@ jettyRun {
 	webAppSourceDirectory = file('src/main/webapp/')
 	webXml = file('src/main/webapp/WEB-INF/web.xml')
 }
-
-configurations {
-	all*.exclude(group: 'ch.qos.logback', module: 'logback-classic-1.0.6.jar')
-}
-
 
 /*jettyRun.doLast {
 	if (getStopPort() != null && getStopPort() > 0 && getStopKey() != null) {

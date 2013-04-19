@@ -18,7 +18,7 @@ public class CsvBatch {
 
 	private CsvBatchResult result;
 	private ConnectionPool connectionPool;
-	private InputStream dataFileLocation;
+	private String dataFileLocation;
 	private int startRow;
 	private int endRow;
 	private int commitSize;
@@ -28,14 +28,14 @@ public class CsvBatch {
 		super();
 	}
 
-	public CsvBatch(InputStream argDataFileLocation, int argStartRow, int argEndRow,
-			int argCommitSize) {
+	public CsvBatch(String argDataFileLocation, int argStartRow, int argEndRow,
+	int argCommitSize) {
 		super();
 		this.dataFileLocation = argDataFileLocation;
 		this.startRow = argStartRow;
 		this.endRow = argEndRow;
 		this.commitSize = argCommitSize;
-		this.insertSql = argInsertSql;
+		//this.insertSql = argInsertSql;
 		this.result = new CsvBatchResult();
 	}
 
@@ -98,14 +98,12 @@ public class CsvBatch {
 	public void execute() {
 		// logger.info("processing batch startRow:" + startRow + " endRow:"
 		// + endRow);
-		Connection connection = null;
-		PreparedStatement ps = null;
 		BufferedReader reader = null;
 		ICsvMapReader csvMapReader = null;
 		Item itemObj = null;
 		List<Item> itemList = new ArrayList()
 		try {
-			reader = new BufferedReader((dataFileLocation));
+			reader = new BufferedReader(new FileReader(dataFileLocation));
 			csvMapReader = new CsvMapReader(reader,
 					CsvPreference.STANDARD_PREFERENCE);
 			String[] header = csvMapReader.getHeader(true);
@@ -120,16 +118,18 @@ public class CsvBatch {
 							itemObj = new Item()
 							for (String columnName : header) {
 								++parameterIndex;
-								itemObj.{columnName} = columnNameVsValueMap
-										.get(columnName);
+								if(columnName.equals("price")) {
+									itemObj."${columnName}" = Double.parseDouble(columnNameVsValueMap
+											.get(columnName));
+								}else {
+									itemObj."${columnName}" = columnNameVsValueMap
+											.get(columnName);
+								}
 							}
 							itemList.add(itemObj);
 							++currentBatchSize;
 							if (currentBatchSize == this.getCommitSize()) {
 								BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).insert(itemList)
-								// logger.info("Committed batch startRow:"
-								// + startRow + " endRow:" + endRow
-								// + " counts:" + Arrays.toString(counts));
 								currentBatchSize = 0;
 								itemList.clear()
 							}
@@ -140,57 +140,16 @@ public class CsvBatch {
 				}
 				if (currentBatchSize > 0) {
 					BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).insert(itemList)
-					// logger.info("Committed batch startRow:" + startRow
-					// + " endRow:" + endRow + " counts:"
-					// + Arrays.toString(counts));
 				}
 			}
 		} catch (Exception e) {
-			if (connection != null) {
-				try {
-					connection.rollback();
-				} catch (Exception ignore) {
-					// ignore
-				}
-			}
+			e.printStackTrace()
 		} finally {
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (Exception ignore) {
-					// ignore
-				}
-			}
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception ignore) {
-					// ignore
-				}
-			}
+			//log
 		}
 	}
 
 	private CellProcessor[] getProcessors() {
 		return new CellProcessor[0];
 	}
-
-	/*private CellProcessor[] getProcessors2() {
-		final String emailRegex = "[a-z0-9\\._]+@[a-z0-9\\.]+";
-		StrRegEx.registerMessage(emailRegex, "must be a valid email address");
-		final CellProcessor[] processors = new CellProcessor[] {
-				new UniqueHashCode(), // customerNo (must be unique)
-				new NotNull(), // firstName
-				new NotNull(), // lastName
-				new ParseDate("dd/MM/yyyy"), // birthDate
-				new NotNull(), // mailingAddress
-				new Optional(new ParseBool()), // married
-				new Optional(new ParseInt()), // numberOfKids
-				new NotNull(), // favouriteQuote
-				new StrRegEx(emailRegex), // email
-				new LMinMax(0L, LMinMax.MAX_LONG) // loyaltyPoints
-		};
-
-		return processors;
-	}*/
 }

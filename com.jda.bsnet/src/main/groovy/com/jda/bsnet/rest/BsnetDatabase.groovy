@@ -89,7 +89,7 @@ class BsnetDatabase {
 		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
 		StringWriter sw = new StringWriter()
 		objectMapper.writeValue(sw, item)
-		println sw.toString()
+		println Long.parseLong("102.34")
 
 		//println "password 1" + BsnetUtils.encrypt("wglbuyer")
 		//	println "password 2" + BsnetUtils.encrypt("wglbuyer")
