@@ -1,0 +1,61 @@
+{
+  "host": {
+    "hostName": "api.jda.com",
+    "httpPort": 4080,
+    "httpsPort": 4443,
+    "dbUri": "mongodb://localhost:27017/bsnet"
+  },
+  "webApps": [
+    {
+      "appDir": "./webapp/",
+      "hostNames": [
+        "localhost",
+        "api.jda.com"
+      ],
+      "contextPath": "/bsnet"
+    }
+  ],
+  "keystore": {
+    "keystoreFile": null,
+    "keystorePassword": "BSNET",
+    "keyPassword": "BSNETO"
+  },
+  "threadPool": {
+    "threadPoolSize": 50,
+    "acceptorThreadSize": 5,
+    "acceptorQueueSize": 200,
+    "maxIdleTime": 30000
+  },
+  "requestLog": {
+    "accessLogTimeZone": "GMT+5:30",
+    "accessLogEnabled": true,
+    "accessLogFileName": "access.log",
+    "accessLogDirectory": "logs/access",
+    "statsOn": true,
+    "accessLogAppend": true,
+    "accessLogRetainDays": 2,
+    "accessLogServerName": true,
+    "accessLogExtended": true,
+    "accessLogEnableLatency": true,
+    "accessLogCookies": true
+  },
+  "cipherSuites": {
+    "included": [],
+    "excluded": []
+  },
+  "httpHeaders": {
+    "httpRequestHeaderSize": 8192,
+    "httpsRequestHeaderSize": 8192,
+    "httpResponseHeaderSize": 8192,
+    "httpsResponseHeaderSize": 8192
+  },
+  "mailConfig":{
+   	"smtpHost" : "hydergw.jda.com",
+   	"smtpPort" : "",
+   	"approveSub": "Request For Approval",
+   	"approveBody" : "Dear USER,<BR><BR> Greetings from ARGO Team.<BR><BR>You've shown intrest on below items Portal.<BR><BR><BR>Please click the link below to confirm the relation.<BR>",
+
+   	 "orgAprroveSub" :"Organization Approved",
+   	 "orgApproveBody" :"Thank you for registering with us. You can user our services now."
+   }
+}

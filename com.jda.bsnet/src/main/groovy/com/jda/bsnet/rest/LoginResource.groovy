@@ -11,6 +11,7 @@ import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.Context
+import javax.ws.rs.core.Response
 
 import net.vz.mongodb.jackson.DBQuery
 
@@ -84,6 +85,19 @@ class LoginResource {
 			}
 		}
 		return lResp
+	}
+
+	@POST
+	@Path("logout")
+	@Consumes(APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
+
+	Response logOut(@Context HttpServletRequest req) {
+
+		HttpSession httpSession = req.getSession();
+		httpSession.removeAttribute("orgName");
+		httpSession.invalidate();
+		return Response.ok().build()
 	}
 
 	boolean isOrgApproved(User user) {

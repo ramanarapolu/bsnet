@@ -1,0 +1,1 @@
+<div class="footertext">Copyright © 1995-2013 Argo Inc. All Rights Reserved. Designated trademarks and brands are the property of their respective owners.</div>

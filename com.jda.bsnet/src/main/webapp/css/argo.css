@@ -1,0 +1,33 @@
+.joinTab{
+	max-height: 620px !important;
+}
+
+.buysellchkbox{
+	float: left;
+	margin-right: 13px;
+	margin: 8px 13px 0 0 !important;
+}
+
+.buyselllabel{
+	padding-right: 10px;
+}
+.footertext{
+	text-align: center;
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: small;
+	color: #666;	
+}
+#argofooter{
+    width: 100%;
+    position: fixed;
+    top: 100%;
+    margin-top: -20px;
+    height: 20px;
+}
+#userloginErrorDiv{
+	margin: -5px 0 5px 0;
+}
+.hideBlock{
+	display: none;
+}
+

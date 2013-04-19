@@ -1,0 +1,19 @@
+{
+   "subscribers":[
+      {
+         "orgName":"org1",
+         "role":"buyer",
+         "status":"pending"
+      },
+      {
+         "orgName":"org2",
+         "role":"seller",
+         "status":"pending"
+      },
+      {
+         "orgName":"org1",
+         "role":"seller",
+         "status":"pending"
+      }
+   ]
+}
