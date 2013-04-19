@@ -1,4 +1,4 @@
-package com.jda.bsnet
+package com.jda.bsnet.util
 
 class RoleDef {
 	public static final String JDA_ADMIN = "jdaadmin"

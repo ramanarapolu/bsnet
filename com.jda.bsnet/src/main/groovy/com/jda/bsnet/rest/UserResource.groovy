@@ -2,7 +2,6 @@ package com.jda.bsnet.rest;
 
 import static javax.ws.rs.core.MediaType.*
 
-
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import javax.ws.rs.Consumes
@@ -18,11 +17,11 @@ import net.vz.mongodb.jackson.DBCursor
 import net.vz.mongodb.jackson.DBQuery
 import net.vz.mongodb.jackson.WriteResult
 
-import com.jda.bsnet.BsnetUtils;
 import com.jda.bsnet.model.Organization
 import com.jda.bsnet.model.User
 import com.jda.bsnet.uitransfer.UserAndOrg
-import com.mongodb.BasicDBObject;
+import com.jda.bsnet.util.BsnetUtils
+import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
 
 @Path("/user")

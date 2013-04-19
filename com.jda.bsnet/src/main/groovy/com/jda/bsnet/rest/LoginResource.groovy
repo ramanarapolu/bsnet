@@ -14,14 +14,14 @@ import javax.ws.rs.core.Context
 
 import net.vz.mongodb.jackson.DBQuery
 
-import com.jda.bsnet.BsnetUtils
-import com.jda.bsnet.RoleDef
 import com.jda.bsnet.model.MenuMetaData
 import com.jda.bsnet.model.Organization
 import com.jda.bsnet.model.User
 import com.jda.bsnet.uitransfer.LoginResponse
 import com.jda.bsnet.uitransfer.MenuUrlPair
 import com.jda.bsnet.uitransfer.UserDetails
+import com.jda.bsnet.util.BsnetUtils
+import com.jda.bsnet.util.RoleDef
 import com.mongodb.MongoException
 
 @Path("/login")

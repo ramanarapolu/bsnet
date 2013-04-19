@@ -49,7 +49,7 @@ class BuyerItemResource {
 			if(supCur != null) {
 				suppliers = new ArrayList()
 				while(supCur.hasNext()){
-					supplier = (SupplierItem) orgCur.next()
+					supplier = (SupplierItem) supCur.next()
 					suppliers.add(supplier)
 				}
 			}
@@ -69,9 +69,6 @@ class BuyerItemResource {
 		String buyerOrg = req.getParameter("buyerOrg")
 		String buyerOrg_id = req.getParameter("id")
 		String supplierOrg = req.getParameter("supplierOrg")
-
-
-		//check whether Id thrown is correct first.
 
 		Organization org = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).findOne(DBQuery.is("_id",buyerOrg_id))
 

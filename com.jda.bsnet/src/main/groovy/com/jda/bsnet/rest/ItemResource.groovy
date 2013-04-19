@@ -20,11 +20,11 @@ import net.vz.mongodb.jackson.WriteResult
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition
 import org.glassfish.jersey.media.multipart.FormDataParam
 
-import com.jda.bsnet.CsvUtils
 import com.jda.bsnet.csv.CsvBatch
 import com.jda.bsnet.csv.CsvBatchTaskCallable
 import com.jda.bsnet.model.Item
 import com.jda.bsnet.model.SupplierItem
+import com.jda.bsnet.util.CsvUtils
 import com.mongodb.MongoException
 
 @Path("/item")

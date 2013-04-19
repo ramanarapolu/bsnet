@@ -1,4 +1,4 @@
-package com.jda.bsnet
+package com.jda.bsnet.util
 
 import org.supercsv.prefs.CsvPreference
 

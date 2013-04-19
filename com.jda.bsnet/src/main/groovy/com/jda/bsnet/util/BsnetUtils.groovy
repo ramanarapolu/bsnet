@@ -1,4 +1,4 @@
-package com.jda.bsnet
+package com.jda.bsnet.util
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 

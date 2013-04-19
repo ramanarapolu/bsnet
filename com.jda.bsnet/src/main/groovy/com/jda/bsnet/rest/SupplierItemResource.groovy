@@ -16,12 +16,12 @@ import javax.ws.rs.core.Response
 import net.vz.mongodb.jackson.DBCursor
 import net.vz.mongodb.jackson.DBQuery
 
-import com.jda.bsnet.BsnetUtils;
 import com.jda.bsnet.model.BsRelation
 import com.jda.bsnet.model.BuyerItem
 import com.jda.bsnet.model.Organization
 import com.jda.bsnet.model.SupplierItem
 import com.jda.bsnet.uitransfer.BSRelationState
+import com.jda.bsnet.util.BsnetUtils
 import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
 
