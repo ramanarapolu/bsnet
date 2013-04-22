@@ -24,7 +24,8 @@ import com.jda.bsnet.model.SupplierItem
 import com.jda.bsnet.uitransfer.BSRelationState
 import com.jda.bsnet.uitransfer.ItemForSup
 import com.jda.bsnet.uitransfer.JtableAddResponse
-import com.jda.bsnet.uitransfer.JtableResponse;
+import com.jda.bsnet.uitransfer.JtableJson
+import com.jda.bsnet.uitransfer.JtableResponse
 import com.jda.bsnet.util.BsnetUtils
 import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
@@ -114,8 +115,7 @@ class SupplierItemResource {
 	@GET
 	@Path("optionsList")
 	@Produces(APPLICATION_JSON)
-	@Consumes(APPLICATION_JSON)
-	List<ItemForSup> optionsList(@Context HttpServletRequest req) {
+	JtableJson optionsList(@Context HttpServletRequest req) {
 
 		List<ItemForSup> result = new ArrayList()
 		try {
@@ -152,15 +152,14 @@ class SupplierItemResource {
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
-		return result
+		return new JtableJson("OK", result)
 	}
 
 
 	@GET
 	@Path("listAll")
 	@Produces(APPLICATION_JSON)
-	@Consumes(APPLICATION_JSON)
-	List<ItemForSup> listAll(@Context HttpServletRequest req) {
+	JtableJson listAll(@Context HttpServletRequest req) {
 
 		List<ItemForSup> result = new ArrayList()
 		try {
@@ -188,13 +187,13 @@ class SupplierItemResource {
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
-		return result
+		return new JtableJson("OK", result)
 	}
 
 	@GET
 	@Path("getBSRelationState")
 	@Produces(APPLICATION_JSON)
-	List<BSRelationState> getBSRelationState(@Context HttpServletRequest req) {
+	JtableJson getBSRelationState(@Context HttpServletRequest req) {
 
 		List<BSRelationState> bsStateList = new ArrayList()
 		BSRelationState bsState = null;
@@ -235,7 +234,7 @@ class SupplierItemResource {
 					}
 				}
 			}
-			return bsStateList
+			return new JtableJson("OK", bsStateList)
 		}catch(MongoException e) {
 			throw new InternalServerErrorException(e)
 		}
