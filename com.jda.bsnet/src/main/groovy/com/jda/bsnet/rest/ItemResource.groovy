@@ -64,11 +64,11 @@ class ItemResource {
 		{
 			try {
 				WriteResult<Item, String> result = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).insert(item)
-
-				//DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find(DBQuery.is("itemName",item.itemName))
-				//item = (Item) itemCur.next();
+				
+				DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find(DBQuery.is("itemName",item.itemName))
+				item = (Item) itemCur.next();				
 				//return  new JtableResponse("OK")
-
+				
 				return  new JtableAddResponse("OK", item)
 			}catch(MongoException e){
 				e.printStackTrace()
@@ -80,24 +80,33 @@ class ItemResource {
 			}
 		}
 	}
-
+	
 	@POST
 	@Path("update")
 	@Produces(APPLICATION_JSON)
 	JtableResponse updateItem(@Context HttpServletRequest req) {
-
-		Item item = new Item();
+		
+		Item item = new Item();		
+		item._id = req.getParameter("_id")
 		item.itemName = req.getParameter("itemName")
 		item.description = req.getParameter("description")
+		if(req.getParameter("price") != null && req.getParameter("price")!= ""){
 		item.price = Double.parseDouble(req.getParameter("price"));
+		}
 		item.category = req.getParameter("category")
-
-
+		
+		
 			try {
-				/*BasicDBObject source = new BasicDBObject("itemName",req.getParameter("itemName"));
+				BasicDBObject source = new BasicDBObject()
+				source.put("_id", new ObjectId(item._id))				
 				BasicDBObject newDocument = new BasicDBObject();
-				newDocument.append('$set', new BasicDBObject().append("approved", true));
-				BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).update(source,newDocument)*/
+				newDocument.append("itemName", item.itemName)
+				newDocument.append("description", item.description)
+				newDocument.append("price", item.price)
+				newDocument.append("category", item.category)				
+				//BasicDBObject updatedDoc = new BasicDBObject('$set', newDocument);				
+				BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).update(source,new BasicDBObject('$set', newDocument))
+				
 			}catch(MongoException e){
 
 				throw new InternalServerErrorException(e)
