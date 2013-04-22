@@ -14,8 +14,6 @@
 			fields : {
 				orgName : {
 					title : "Organization",
-					create : false,
-					edit : false,
 					width : "20%"
 				},
 				buyer : {
@@ -27,7 +25,6 @@
 						'true' : 'Yes'
 					},
 				},
-
 				supplier : {
 					title : "Supplier",
 					width : "10%",

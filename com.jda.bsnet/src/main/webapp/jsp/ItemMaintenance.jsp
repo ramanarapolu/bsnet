@@ -1,45 +1,59 @@
 <link rel="stylesheet" type="text/css" href="jtable/themes/metro/blue/jtable.min.css" />
-hello
 <div id="uploadDataFromFiles">
-	<div class="jtable-toolbar">Upload files</div>
-	<form action="bsnet/item/uploadItems" method="post" enctype="multipart/form-data">
-       <p>
-        Choose a file : <input type="file" name="file" />
-       </p>
-       <input type="submit" value="Upload" />
-    </form>
+	<span>
+		<div class="uploadHead">
+			<span class="textFont">Upload files</span>
+		</div>
+		<form action="bsnet/item/uploadItems" method="post"
+			enctype="multipart/form-data">
+			<span class="floatRight">
+				<span>
+					<input class="textFont uploadWidth" type="file" name="file" />
+					<input type="submit" value="Upload" class="uploadBtn textFont font14" />
+				</span>
+			</span>
+		</form>
 </div>
-<div id="uploadSingleItem"></div>
-
+<div id="uploadSingleItem" class="marginTop80"></div>
 <script type="text/javascript" src="jtable/jquery.jtable.min.js"></script>
 <script type="text/javascript">
-$(document).ready(function() {
-	$('#uploadSingleItem').jtable({
-		title : 'Organizations for Approval',
-		actions : {
-			createAction : 'bsnet/item/create'
-		},
-		fields : {
-			itemName : {
-				title : "Item Name",
-				create : false,
-				edit : false,
-				width : "20%"
+	$(document).ready(function() {
+		$('#uploadSingleItem').jtable({
+			messages: {
+				addNewRecord: 'Add New Item'
 			},
-			Description : {
-				title : "Description",
-				width : "20%"				
+			title : 'Upload Single Item',
+			actions : {
+				listAction: 'bsnet/item/listAll',
+				createAction : 'bsnet/item/create',
+				updateAction: '/bsnet/bsnet/item/update',
+				deleteAction: '/bsnet/bsnet/item/delete'
 			},
-			Price : {
-				title : "Price",
-				width : "10%"				
-			},
-			Category : {
-				title : "Category",
-				width : "20%"
+			fields : {
+				_id: {
+					key: true,
+					create: false,
+					edit: false,
+					list: false
+                },
+				itemName : {
+					title : "Item Name",
+					width : "10%"
+				},
+				Description : {
+					title : "Description",
+					width : "20%"
+				},
+				Price : {
+					title : "Price",
+					width : "10%"
+				},
+				Category : {
+					title : "Category",
+					width : "10%"
+				}
 			}
-		}
+		});
+		$('#uploadSingleItem').jtable('load');
 	});
-	$('#OrgTableContainer').jtable('load');
-});
 </script>

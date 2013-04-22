@@ -6,6 +6,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.glassfish.jersey.uri.internal.JerseyUriBuilder;
+
 import com.yammer.metrics.annotation.Timed;
 // Plain old Java Object it does not extend as class or implements
 // an interface

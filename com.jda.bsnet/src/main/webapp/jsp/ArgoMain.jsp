@@ -10,7 +10,7 @@
 	</head>
 	<body>
 		<div id="argoheader"><jsp:include page="headermain.jsp" /></div>
-		<div id="argobody"><jsp:include page="login.jsp" /></div>
+		<div id="argobody" class="marginTop10"><jsp:include page="login.jsp" /></div>
 		<div id="argofooter"><jsp:include page="footer.jsp" /></div>
 		<div id="argohtmlcontent" class="hideBlock"></div>
 	</body>

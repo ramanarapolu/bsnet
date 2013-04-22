@@ -1,16 +1,30 @@
-.joinTab{
-	max-height: 620px !important;
+/* common classes */
+.textFont{
+	font-family: 'Segoe UI Semilight','Open Sans',Verdana,Arial,Helvetica,sans-serif;
+	font-weight: 300;
+	font-size: 19px;
+	line-height: 34px;
+	color: #FFF;
 }
-
-.buysellchkbox{
-	float: left;
-	margin-right: 13px;
-	margin: 8px 13px 0 0 !important;
+.textBlack{
+	color: #000;
 }
-
-.buyselllabel{
-	padding-right: 10px;
+.marginTop10{
+	margin-top: 10px;
 }
+.marginTop80{
+	margin-top: 80px;
+}
+.font14{
+	font-size:14px;
+}
+.floatRight{
+	float: right;
+}
+.hideBlock{
+	display: none;
+}
+/* footer */
 .footertext{
 	text-align: center;
 	font-family: Arial,Helvetica,sans-serif;
@@ -24,10 +38,33 @@
     margin-top: -20px;
     height: 20px;
 }
+
+.joinTab{
+	max-height: 620px !important;
+}
+.buysellchkbox{
+	float: left;
+	margin-right: 13px;
+	margin: 8px 13px 0 0 !important;
+}
+.buyselllabel{
+	padding-right: 10px;
+}
 #userloginErrorDiv{
 	margin: -5px 0 5px 0;
 }
-.hideBlock{
-	display: none;
-}
 
+/* item maintenance jsp */
+.uploadHead{
+	background-color: #0B67CD;
+	padding-left: 10px;
+	position: relative;
+	text-align: left;
+	margin-bottom: 10px;
+}
+.uploadBtn{
+	background-color: #1571D7;
+}
+.uploadWidth{
+	width: 125px;
+}

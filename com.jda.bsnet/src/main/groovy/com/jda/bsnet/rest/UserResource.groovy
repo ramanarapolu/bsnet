@@ -2,6 +2,8 @@ package com.jda.bsnet.rest;
 
 import static javax.ws.rs.core.MediaType.*
 
+import java.util.concurrent.TimeUnit
+
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import javax.ws.rs.Consumes
@@ -19,16 +21,21 @@ import net.vz.mongodb.jackson.WriteResult
 
 import com.jda.bsnet.model.Organization
 import com.jda.bsnet.model.User
+import com.jda.bsnet.uitransfer.JtableJson
+import com.jda.bsnet.uitransfer.JtableResponse
 import com.jda.bsnet.uitransfer.UserAndOrg
 import com.jda.bsnet.util.BsnetUtils
 import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
+import com.yammer.metrics.annotation.Timed
 
 @Path("/user")
 class UserResource {
 
 	@GET
 	@Path("hello")
+	@Timed(name = "getHello", rateUnit = TimeUnit.SECONDS, durationUnit = TimeUnit.MICROSECONDS)
+
 	@Produces(TEXT_PLAIN)
 	//Example URL:  http://api.jda.com/reco/v1/users/hello
 	String getHello(){
@@ -128,16 +135,17 @@ class UserResource {
 	}
 
 
-	@GET
+	@POST
 	@Path("getPendingOrgs")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
 
-	List<Organization> getPendingOrgs(){
+	JtableJson getPendingOrgs(){
 		List<Organization> orgs = null
 		Organization org = null
 		try {
-			DBCursor<Organization> orgCur = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).find()//(DBQuery.is("approved",false))
+			//DBCursor<Organization> orgCur = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).find(DBQuery.is("approved",false))
+			DBCursor<Organization> orgCur = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).find()
 			if(orgCur != null) {
 				orgs = new ArrayList()
 				while(orgCur.hasNext()){
@@ -148,7 +156,7 @@ class UserResource {
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
-		return orgs
+		return  new JtableJson("OK", orgs)
 	}
 	@POST
 	@Path("approveOrgs")
@@ -176,6 +184,25 @@ class UserResource {
 		}
 		return Response.ok().build()
 	}
+
+	@POST
+	@Path("approveOrgs1")
+	@Produces(APPLICATION_JSON)
+	JtableResponse updateOrgs1(@Context HttpServletRequest req) {
+		println "enterd updateOrgs1" + req.getParameter("orgName")
+		try {
+			BasicDBObject source = new BasicDBObject("orgName",req.getParameter("orgName"));
+			BasicDBObject newDocument = new BasicDBObject();
+			newDocument.append('$set', new BasicDBObject().append("approved", true));
+			BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).update(source,newDocument)
+		}catch(MongoException e){
+
+			throw new InternalServerErrorException(e)
+		}
+
+		return  new JtableResponse("OK")
+	}
+
 
 	@GET
 	@Path("getUserByOrg")

@@ -4,12 +4,14 @@ import static javax.ws.rs.core.MediaType.*
 import groovy.util.logging.Slf4j
 import groovyx.gpars.GParsPool
 
+import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
+import javax.ws.rs.core.Context
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
@@ -17,6 +19,7 @@ import net.vz.mongodb.jackson.DBCursor
 import net.vz.mongodb.jackson.DBQuery
 import net.vz.mongodb.jackson.WriteResult
 
+import org.bson.types.ObjectId
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition
 import org.glassfish.jersey.media.multipart.FormDataParam
 
@@ -24,7 +27,11 @@ import com.jda.bsnet.csv.CsvBatch
 import com.jda.bsnet.csv.CsvBatchTaskCallable
 import com.jda.bsnet.model.Item
 import com.jda.bsnet.model.SupplierItem
+import com.jda.bsnet.uitransfer.JtableAddResponse
+import com.jda.bsnet.uitransfer.JtableJson
+import com.jda.bsnet.uitransfer.JtableResponse
 import com.jda.bsnet.util.CsvUtils
+import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
 
 @Path("/item")
@@ -44,21 +51,113 @@ class ItemResource {
 
 	@POST
 	@Path("create")
-	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
-	Item createItem(Item item) {
-
+	JtableAddResponse createItem(@Context HttpServletRequest req) {
+		Item item = new Item();
+		item.itemName = req.getParameter("itemName")
+		item.description = req.getParameter("description")
+		if(req.getParameter("price") != null && req.getParameter("price")!= ""){
+		item.price = Double.parseDouble(req.getParameter("price"));
+		}
+		item.category = req.getParameter("category")
 		if (item != null)
 		{
 			try {
 				WriteResult<Item, String> result = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).insert(item)
-				return result.getSavedObject();
+
+				//DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find(DBQuery.is("itemName",item.itemName))
+				//item = (Item) itemCur.next();
+				//return  new JtableResponse("OK")
+
+				return  new JtableAddResponse("OK", item)
 			}catch(MongoException e){
 				e.printStackTrace()
 				throw new InternalServerErrorException(e)
 			}
+			catch(MongoException e)
+			{
+				throw new InternalServerErrorException(e)
+			}
 		}
 	}
+
+	@POST
+	@Path("update")
+	@Produces(APPLICATION_JSON)
+	JtableResponse updateItem(@Context HttpServletRequest req) {
+
+		Item item = new Item();
+		item.itemName = req.getParameter("itemName")
+		item.description = req.getParameter("description")
+		item.price = Double.parseDouble(req.getParameter("price"));
+		item.category = req.getParameter("category")
+
+
+			try {
+				/*BasicDBObject source = new BasicDBObject("itemName",req.getParameter("itemName"));
+				BasicDBObject newDocument = new BasicDBObject();
+				newDocument.append('$set', new BasicDBObject().append("approved", true));
+				BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).update(source,newDocument)*/
+			}catch(MongoException e){
+
+				throw new InternalServerErrorException(e)
+			}
+
+		return  new JtableResponse("OK")
+	}
+
+
+	@POST
+	@Path("delete")
+	@Produces(APPLICATION_JSON)
+	JtableResponse deleteItem (@Context HttpServletRequest req){
+		Item item = new Item();
+		item._id = req.getParameter("_id")
+		println item._id
+
+		//deleting from database
+		try{
+			ObjectId objId= new ObjectId(item._id);
+
+			BasicDBObject document = new BasicDBObject();
+			document.put("_id", objId);
+			 BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).remove(document)
+
+		}catch(MongoException e){
+
+				throw new InternalServerErrorException(e)
+			}
+
+		return  new JtableResponse("OK")
+
+	}
+
+
+	@POST
+	@Path("listAll")
+	@Consumes(APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
+
+	JtableJson getAllItems(){
+		List<Item> items = null
+		Item item = null
+		try {
+			//DBCursor<Organization> orgCur = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).find(DBQuery.is("approved",false))
+			DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find()
+			if(itemCur != null) {
+				items = new ArrayList()
+				while(itemCur.hasNext()){
+					item = (Item) itemCur.next();
+					items.add(item)
+				}
+			}
+		}catch(MongoException e){
+			throw new InternalServerErrorException(e)
+		}
+
+	 return  new JtableJson("OK", items)
+	}
+
 
 	@POST
 	@Path("/uploadItems")
@@ -102,27 +201,6 @@ class ItemResource {
 		return Response.ok().build()
 	}
 
-	@GET
-	@Path("getAllItems")
-	@Produces(APPLICATION_JSON)
-	List<Item> getAllItems() {
-		log.info "Entered getAll Items method"
-		List<Item> items = null
-		Item item = null
-		try {
-			DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find()//(DBQuery.is("approved",false))
-			if(itemCur != null) {
-				items = new ArrayList()
-				while(itemCur.hasNext()){
-					item = (Item) itemCur.next();
-					items.add(item)
-				}
-			}
-		}catch(MongoException e){
-			throw new InternalServerErrorException(e)
-		}
-		return items
-	}
 
 	@POST
 	@Path("getSuppliers")

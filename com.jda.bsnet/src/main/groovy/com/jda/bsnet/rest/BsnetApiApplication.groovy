@@ -1,16 +1,12 @@
 package com.jda.bsnet.rest;
 
-import javax.annotation.PostConstruct
-
-import javax.servlet.ServletConfig
-import javax.servlet.ServletContext
 import javax.ws.rs.ApplicationPath
 import javax.ws.rs.core.Application
-import javax.ws.rs.core.Context
 
 import org.glassfish.jersey.filter.LoggingFilter
 import org.glassfish.jersey.jackson.JacksonFeature
 import org.glassfish.jersey.media.multipart.MultiPartFeature
+
 
 @ApplicationPath("bsnet")
 class BsnetApiApplication extends Application {
@@ -44,6 +40,8 @@ class BsnetApiApplication extends Application {
 	@Override
 	public Set<Object> getSingletons() {
 		final Set<Object> instances = new HashSet<Object>();
+		//MetricsRegistry registry = new MetricsRegistry()//
+		//instances.add(new InstrumentedResourceMethodDispatchAdapter());
 		instances.add(new JacksonFeature());
 		instances.add(new LoggingFilter());
 		return instances;
