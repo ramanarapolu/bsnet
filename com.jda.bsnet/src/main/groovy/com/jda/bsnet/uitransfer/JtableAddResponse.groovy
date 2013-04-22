@@ -16,9 +16,6 @@ public class JtableAddResponse {
 
 		Result = rslt
 		Record=rec
-
 	}
-
-
 }
 

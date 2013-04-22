@@ -9,6 +9,7 @@ import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.POST
+import javax.ws.rs.PUT
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.Context
@@ -64,11 +65,11 @@ class ItemResource {
 		{
 			try {
 				WriteResult<Item, String> result = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).insert(item)
-				
+
 				DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find(DBQuery.is("itemName",item.itemName))
-				item = (Item) itemCur.next();				
+				item = (Item) itemCur.next();
 				//return  new JtableResponse("OK")
-				
+
 				return  new JtableAddResponse("OK", item)
 			}catch(MongoException e){
 				e.printStackTrace()
@@ -80,13 +81,13 @@ class ItemResource {
 			}
 		}
 	}
-	
+
 	@POST
 	@Path("update")
 	@Produces(APPLICATION_JSON)
 	JtableResponse updateItem(@Context HttpServletRequest req) {
-		
-		Item item = new Item();		
+
+		Item item = new Item();
 		item._id = req.getParameter("_id")
 		item.itemName = req.getParameter("itemName")
 		item.description = req.getParameter("description")
@@ -94,19 +95,19 @@ class ItemResource {
 		item.price = Double.parseDouble(req.getParameter("price"));
 		}
 		item.category = req.getParameter("category")
-		
-		
+
+
 			try {
 				BasicDBObject source = new BasicDBObject()
-				source.put("_id", new ObjectId(item._id))				
+				source.put("_id", new ObjectId(item._id))
 				BasicDBObject newDocument = new BasicDBObject();
 				newDocument.append("itemName", item.itemName)
 				newDocument.append("description", item.description)
 				newDocument.append("price", item.price)
-				newDocument.append("category", item.category)				
-				//BasicDBObject updatedDoc = new BasicDBObject('$set', newDocument);				
+				newDocument.append("category", item.category)
+				//BasicDBObject updatedDoc = new BasicDBObject('$set', newDocument);
 				BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).update(source,new BasicDBObject('$set', newDocument))
-				
+
 			}catch(MongoException e){
 
 				throw new InternalServerErrorException(e)
@@ -168,7 +169,7 @@ class ItemResource {
 	}
 
 
-	@POST
+	@PUT
 	@Path("/uploadItems")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(APPLICATION_JSON)
