@@ -79,7 +79,16 @@ class UserResource {
 
 				result = BsnetDatabase.getInstance().getJacksonDBCollection(User.class).insert(user)
 				userOrgDetails.success = true
+
+				//send mail to admin that Org created need to be approved.
+
+				Properties bsNetProp = BsnetDatabase.getInstance().getBsnetServerConfig()
+				String body=bsNetProp.get("email.orgcrea.body").toString();
+				body=body.replace("ORGNAME", org.orgName)
+				BsnetUtils.sendMail("ramana.rapolu@jda.com", bsNetProp.get("email.orgcrea.subject").toString(), body.toString())
 				return userOrgDetails
+
+
 			}
 			catch(MongoException e)
 			{
@@ -152,7 +161,15 @@ class UserResource {
 				BasicDBObject newDocument = new BasicDBObject();
 				newDocument.append('$set', new BasicDBObject().append("approved", true));
 				BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).update(source,newDocument)
+
+				String orgAdminId = BsnetUtils.getAdminMailId(org.orgName)
 				// Send mail to orgAdmin saying you org approved ???
+
+				Properties bsNetProp = BsnetDatabase.getInstance().getBsnetServerConfig()
+				String body=bsNetProp.get("email.orgapp.body").toString();
+				body=body.replace("USER", org.orgName)
+				BsnetUtils.sendMail(orgAdminId, bsNetProp.get("email.orgapp.subject").toString(), body.toString())
+
 			}catch(MongoException e){
 				throw new InternalServerErrorException(e)
 			}

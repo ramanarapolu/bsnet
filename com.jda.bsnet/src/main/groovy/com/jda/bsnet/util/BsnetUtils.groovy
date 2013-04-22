@@ -49,6 +49,7 @@ class BsnetUtils {
 	static boolean sendMail(String toAddresses,String subject,String body)
 	{
 		boolean status=true;
+		println "sending mail to :" + toAddresses
 		Properties bsnetProp = BsnetDatabase.getInstance().getBsnetServerConfig()
 		String from = bsnetProp.get("mail.smtp.from").toString();
 		String host = bsnetProp.get("mail.smtp.host").toString();
@@ -62,9 +63,11 @@ class BsnetUtils {
 			MimeMessage message = new MimeMessage(session);
 			message.setFrom(new InternetAddress(from));
 			message.addRecipient(Message.RecipientType.TO,new InternetAddress(toAddresses));
+			message.setContent(body, "text/html")
 			message.setSubject(subject);
 			Transport.send(message);
 		}catch (MessagingException e) {
+			e.printStackTrace()
 			throw e;
 		}
 		return status;
