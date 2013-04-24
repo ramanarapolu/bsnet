@@ -16,6 +16,8 @@ import net.vz.mongodb.jackson.DBCursor
 import net.vz.mongodb.jackson.DBQuery
 import net.vz.mongodb.jackson.WriteResult
 
+import org.bson.types.ObjectId
+
 import com.jda.bsnet.model.BsRelation
 import com.jda.bsnet.model.BuyerItem
 import com.jda.bsnet.model.Item
@@ -25,6 +27,8 @@ import com.jda.bsnet.uitransfer.BSRelationState
 import com.jda.bsnet.uitransfer.ItemForSup
 import com.jda.bsnet.uitransfer.JtableAddResponse
 import com.jda.bsnet.uitransfer.JtableJson
+import com.jda.bsnet.uitransfer.JtableOptions
+import com.jda.bsnet.uitransfer.JtableOptionsResponse
 import com.jda.bsnet.uitransfer.JtableResponse
 import com.jda.bsnet.util.BsnetUtils
 import com.mongodb.BasicDBObject
@@ -44,12 +48,17 @@ class SupplierItemResource {
 			String orgName = session.getAttribute("orgName")
 			SupplierItem supItem = null
 			supItem = new SupplierItem()
-			supItem.item = req.getParameter("itemName")
+			supItem.item = req.getParameter("item")
 			supItem.orgName = orgName
 			supItem.deliveryWindow = req.getParameter("deliveryWindow")
-			supItem.promoPrice = req.getParameter("promoPrice")
+			if(req.getParameter("listprice") != null && req.getParameter("listprice")!= "")
+				supItem.promoPrice = Double.parseDouble(req.getParameter("listprice"))
 			storeList.add(supItem)
 			WriteResult<Item, String> result = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).insert(storeList)//(DBQuery.is("approved",false))
+
+			DBCursor<Item> supCur = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).find(DBQuery.is("item",supItem.item))
+			supItem = (SupplierItem) supCur.next();
+
 			return  new JtableAddResponse("OK", supItem)
 
 		}catch(MongoException e){
@@ -63,25 +72,18 @@ class SupplierItemResource {
 	@Produces(APPLICATION_JSON)
 	JtableResponse updateItem(@Context HttpServletRequest req) {
 
-		HttpSession session = req.getSession();
-		String orgName = session.getAttribute("orgName")
-		//item._id = req.getParameter("_id")
 		try {
-			BasicDBObject source = new BasicDBObject()
-			source.put("item",req.getParameter("itemName"))
+
+			BasicDBObject source = new BasicDBObject("_id",new ObjectId(req.getParameter("_id")));
 			BasicDBObject newDocument = new BasicDBObject();
-			newDocument.append("orgName", orgName)
-			newDocument.append("itemName", req.getParameter("itemName"))
-			newDocument.append("deliveryWindow", req.getParameter("deliveryWindow"))
-			newDocument.append("promoPrice", req.getParameter("promoPrice"))
-			//BasicDBObject updatedDoc = new BasicDBObject('$set', newDocument);
-			BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).update(source,new BasicDBObject('$set', newDocument))
+			newDocument.append('$set', new BasicDBObject().append("deliveryWindow", req.getParameter("deliveryWindow")));
+			newDocument.append('$set', new BasicDBObject().append("promoPrice", req.getParameter("listprice")));
 
+
+			BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).update(source, newDocument)
 		}catch(MongoException e){
-
 			throw new InternalServerErrorException(e)
 		}
-
 		return  new JtableResponse("OK")
 	}
 
@@ -91,33 +93,29 @@ class SupplierItemResource {
 	JtableResponse deleteItem (@Context HttpServletRequest req){
 		//deleting from database
 		try{
+			/*	BasicDBObject andQuery = new BasicDBObject();
+			 List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+			 obj.add(new BasicDBObject("orgName", req.getParameter("orgName")));
+			 obj.add(new BasicDBObject("item", req.getParameter("itemName")));
+			 andQuery.put('$and', obj);*/
 
-
-			BasicDBObject andQuery = new BasicDBObject();
-			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-			obj.add(new BasicDBObject("orgName", req.getParameter("orgName")));
-			obj.add(new BasicDBObject("item", req.getParameter("itemName")));
-			andQuery.put('$and', obj);
-
-			BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).remove(andQuery)
+			ObjectId objId= new ObjectId(req.getParameter("_id"));
+			BasicDBObject document = new BasicDBObject();
+			document.put("_id", objId);
+			BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).remove(document)
 
 		}catch(MongoException e){
-
 			throw new InternalServerErrorException(e)
 		}
-
 		return  new JtableResponse("OK")
-
 	}
 
-
-
-	@GET
+	@POST
 	@Path("optionsList")
 	@Produces(APPLICATION_JSON)
-	JtableJson optionsList(@Context HttpServletRequest req) {
+	JtableOptionsResponse optionsList(@Context HttpServletRequest req) {
 
-		List<ItemForSup> result = new ArrayList()
+		List<JtableOptions> result = new ArrayList()
 		try {
 			HttpSession session = req.getSession();
 			String orgName = session.getAttribute("orgName")
@@ -132,31 +130,68 @@ class SupplierItemResource {
 			}
 
 			DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find()
-			ItemForSup itemForSup = null;
+			//ItemForSup itemForSup = null;
 			Item item = null
-			while(itemCur?.hasNext()){
-				item  = (Item) supCur.next()
+			JtableOptions options = null
+			//int count = 1
+			while(itemCur.hasNext()){
+				item  = (Item) itemCur.next()
 				if(!supItems.contains(item.itemName)) {
-					itemForSup = new ItemForSup()
-					itemForSup.itemName = item.itemName
-					itemForSup.category = item.category
-					itemForSup.listprice = item.price
-					itemForSup.description = item.description
-					itemForSup.imageUrl = item.imageUrl
-					itemForSup.promoPrice = null
-					itemForSup.deliveryWindow = ""
-					result.add(itemForSup)
+					options = new JtableOptions()
+					options.displayText = item.itemName
+					options.value = item.itemName
+					//	count++
+					result.add(options)
 				}
 			}
 
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
-		return new JtableJson("OK", result)
+		return new JtableOptionsResponse("OK", result)
 	}
 
 
-	@GET
+	/*	@POST
+	 @Path("optionsListAll")
+	 @Produces(APPLICATION_JSON)
+	 JtableOptionsResponse optionsListAll(@Context HttpServletRequest req) {
+	 List<JtableOptions> result = new ArrayList()
+	 try {
+	 HttpSession session = req.getSession();
+	 String orgName = session.getAttribute("orgName")
+	 SupplierItem supItem = null;
+	 DBCursor<SupplierItem> supCur = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).find(DBQuery.is("orgName",orgName))
+	 List<String> supItems = new ArrayList()
+	 if(supCur != null) {
+	 while(supCur.hasNext()){
+	 supItem = (SupplierItem) supCur.next()
+	 supItems.add(supItem.item)
+	 }
+	 }
+	 DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find()
+	 //ItemForSup itemForSup = null;
+	 Item item = null
+	 JtableOptions options = null
+	 //int count = 1
+	 while(itemCur.hasNext()){
+	 item  = (Item) itemCur.next()
+	 //if(!supItems.contains(item.itemName)) {
+	 if(true) {
+	 options = new JtableOptions()
+	 options.displayText = item.itemName
+	 options.value = item.itemName
+	 //	count++
+	 result.add(options)
+	 }
+	 }
+	 }catch(MongoException e){
+	 throw new InternalServerErrorException(e)
+	 }
+	 return new JtableOptionsResponse("OK", result)
+	 }*/
+
+	@POST
 	@Path("listAll")
 	@Produces(APPLICATION_JSON)
 	JtableJson listAll(@Context HttpServletRequest req) {
@@ -165,6 +200,7 @@ class SupplierItemResource {
 		try {
 			HttpSession session = req.getSession();
 			String orgName = session.getAttribute("orgName")
+			println orgName
 			SupplierItem supItem = null;
 			ItemForSup itemForSup = null;
 			DBCursor<SupplierItem> supCur = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).find(DBQuery.is("orgName",orgName))
@@ -173,9 +209,10 @@ class SupplierItemResource {
 					itemForSup = new ItemForSup()
 					supItem = (SupplierItem) supCur.next()
 					Item item = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).findOne(DBQuery.is("itemName",supItem.item))
+					itemForSup._id = supItem._id
 					itemForSup.itemName = supItem.item
 					itemForSup.category = item.category
-					itemForSup.listprice = item.price
+					itemForSup.listprice = supItem.promoPrice
 					itemForSup.description = item.description
 					itemForSup.imageUrl = item.imageUrl
 					itemForSup.promoPrice = supItem.promoPrice
@@ -183,11 +220,10 @@ class SupplierItemResource {
 					result.add(itemForSup)
 				}
 			}
-
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
-		return new JtableJson("OK", result)
+		return new JtableJson("OK", result, result.size())
 	}
 
 	@GET

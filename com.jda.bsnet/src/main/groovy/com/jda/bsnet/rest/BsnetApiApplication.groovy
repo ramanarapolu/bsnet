@@ -7,7 +7,6 @@ import org.glassfish.jersey.filter.LoggingFilter
 import org.glassfish.jersey.jackson.JacksonFeature
 import org.glassfish.jersey.media.multipart.MultiPartFeature
 
-import com.yammer.metrics.jersey.InstrumentedResourceMethodDispatchAdapter
 
 
 @ApplicationPath("bsnet")
@@ -25,6 +24,7 @@ class BsnetApiApplication extends Application {
 		classes.add(ItemResource.class);
 		classes.add(UserResource.class);
 		classes.add(BsnetHello.class);
+		//classes.add(InstrumentedResourceMethodDispatchAdapter.class);
 		return classes;
 	}
 

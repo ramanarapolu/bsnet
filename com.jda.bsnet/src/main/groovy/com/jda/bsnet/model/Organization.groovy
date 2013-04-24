@@ -1,8 +1,5 @@
 package com.jda.bsnet.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.jda.bsnet.rest.BsnetDatabase
-import com.mongodb.BasicDBObject
 
 public class Organization {
 	String _id

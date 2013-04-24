@@ -53,7 +53,7 @@ $(document).ready(function() {
 	request.done(function(msg) {
 		$("#argohtmlcontent").html(msg);
 	});
-	
+
 	/* login submit function */
 	$("#loginForm").submit(function() {
 		$("#userNotPresentDiv").addClass("invisible");
@@ -93,7 +93,7 @@ $(document).ready(function() {
 			$("#userloginErrorDiv").removeClass("invisible");
 		}
 	}
-	
+
 	/* toggle function to change the value of checkbox */
 	$('input#org_buyer, #org_supplier').change(function() {
         if ($(this).is(':checked')) {
@@ -103,11 +103,11 @@ $(document).ready(function() {
         }
 		alert($(this).val());
 	});
-	
+
 	/* Call on click of submit button in the registration page */
 	$("#regisForm").submit(function() {
 		var regisFormData = $("form").createRegisObject();
-		alert(regisFormData);
+		//alert(regisFormData);
 		$.ajax({
 			type : "POST",
 			url : "/bsnet/bsnet/user/create",
@@ -117,7 +117,7 @@ $(document).ready(function() {
 			contentType : "application/json; charset=utf-8",
 			dataType : "json",
 			success : function(data) {
-				alert(data);
+				//alert(data);
 				$("#userSuccess").removeClass("invisible");
 			},
 			error : function(errMsg) {
@@ -127,10 +127,10 @@ $(document).ready(function() {
 		});
 		return false;
 	});
-	
+
 	/* action to be invoked on click of the  menu */
 	$(document).on("click", ".menuclick", function() {
-		alert("hello");
+	//	alert("hello");
 		createBodyDiv();
 	});
 });
@@ -148,7 +148,7 @@ function showHomePage(menulist) {
 	$("#argobody div").empty();
 	var menus = [];
 	var mId,pageURL,mname = '';
-	
+
 	$.each(menulist, function(i, val){
 		mId = val.menuId;
 		mname = val.displayName;
@@ -176,7 +176,7 @@ function createMenus(menus){
 
 /* function to load the url in the div based on the current tab */
 function createBodyDiv() {
-	var id = $('#tabs').find('.ui-state-active').find("a").attr("href"); 
+	var id = $('#tabs').find('.ui-state-active').find("a").attr("href");
 	var pageURL = '';
 	$.each(userMenuMap,function(key, val){
 		if(id == val.id){
@@ -184,5 +184,5 @@ function createBodyDiv() {
 		}
 	});
 	$(id).load(pageURL);
-	alert($(id).html());
+	//alert($(id).html());
 }

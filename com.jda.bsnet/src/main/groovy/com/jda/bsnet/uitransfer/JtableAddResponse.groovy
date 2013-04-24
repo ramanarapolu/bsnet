@@ -1,8 +1,5 @@
 package com.jda.bsnet.uitransfer
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 
 public class JtableAddResponse {

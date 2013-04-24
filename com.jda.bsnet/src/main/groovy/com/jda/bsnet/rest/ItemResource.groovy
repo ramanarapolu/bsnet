@@ -33,6 +33,7 @@ import com.jda.bsnet.uitransfer.JtableJson
 import com.jda.bsnet.uitransfer.JtableResponse
 import com.jda.bsnet.util.CsvUtils
 import com.mongodb.BasicDBObject
+
 import com.mongodb.MongoException
 
 @Path("/item")
@@ -148,12 +149,25 @@ class ItemResource {
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
 
-	JtableJson getAllItems(){
+	JtableJson getPendingOrgs(@Context HttpServletRequest req){
 		List<Item> items = null
 		Item item = null
+		int jtStartIndex=0
+		int jtPageSize=10
+		int TotalRecordCount=10
+
+		if(req.getParameter("jtStartIndex") != null && req.getParameter("jtStartIndex") != "")
+		jtStartIndex =  Integer.parseInt (req.getParameter("jtStartIndex"))
+
+		if(req.getParameter("jtPageSize") != null && req.getParameter("jtPageSize") != "")
+		 jtPageSize = Integer.parseInt (req.getParameter("jtPageSize"))
+
+
+		println jtStartIndex+"and"+jtPageSize
 		try {
 			//DBCursor<Organization> orgCur = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).find(DBQuery.is("approved",false))
-			DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find()
+			TotalRecordCount = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).count()
+			DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find().skip(jtStartIndex).limit(jtPageSize)
 			if(itemCur != null) {
 				items = new ArrayList()
 				while(itemCur.hasNext()){
@@ -165,16 +179,17 @@ class ItemResource {
 			throw new InternalServerErrorException(e)
 		}
 
-	 return  new JtableJson("OK", items)
+	 return  new JtableJson("OK", items,TotalRecordCount)
 	}
 
 
-	@PUT
+	@POST
 	@Path("/uploadItems")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(APPLICATION_JSON)
-	Response createBulkItems(@FormDataParam("file") InputStream uploadedInputStream,
-			@FormDataParam("file") FormDataContentDisposition fileDetail) {
+	Response createBulkItems(@FormDataParam("fileToUpload") InputStream uploadedInputStream,
+			@FormDataParam("fileToUpload") FormDataContentDisposition fileDetail) {
+		println "entered file upload function"
 		String uploadedFileLocation = BsnetDatabase.getInstance().getBsnetProp().getProperty("bsnet.itemfile.loc") + fileDetail.getFileName();
 		saveToFile(uploadedInputStream, uploadedFileLocation);
 		long startTime = System.currentTimeMillis();
@@ -205,6 +220,8 @@ class ItemResource {
 					callable.executeBatch()
 				}
 			}
+		}catch(Exception e){
+			e.printStackTrace()
 		} finally {
 			new File(uploadedFileLocation).delete()
 		}

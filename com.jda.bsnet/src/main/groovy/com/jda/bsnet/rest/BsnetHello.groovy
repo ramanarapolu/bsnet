@@ -1,5 +1,7 @@
 package com.jda.bsnet.rest;
 
+import groovy.util.logging.Slf4j;
+
 import javax.ws.rs.GET;
 
 import javax.ws.rs.Path;
@@ -21,6 +23,7 @@ import com.yammer.metrics.annotation.Timed;
 //Sets the path to base URL + /hello
 
 @Path("/hello")
+@Slf4j
 public class BsnetHello {
 
 	// This method is called if TEXT_PLAIN is request
@@ -39,6 +42,8 @@ public class BsnetHello {
 	@Path("xml")
 	@Produces(MediaType.TEXT_XML)
 	public String sayXMLHello() {
+		println "saying XML hello..."
+		log.info "entered XML say hello.."
 		return "<?xml version=\"1.0\"?>" + "<hello> Hello Jersey" + "</hello>";
 	}
 

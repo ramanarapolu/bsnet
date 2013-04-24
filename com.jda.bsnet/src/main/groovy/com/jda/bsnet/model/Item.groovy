@@ -1,6 +1,7 @@
 package com.jda.bsnet.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnore
+
 
 class Item {
 	String _id

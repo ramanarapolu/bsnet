@@ -10,18 +10,17 @@ public class JtableJson {
 	 
 	String Result	
 	List<Object> Records
+	int TotalRecordCount
 
 	JtableJson(String rslt , List<Object> rec){
 		Result = rslt
 		Records = rec
 	}
 	
-	JtableJson(String rslt , Object rec){
-		
-		Records = new ArrayList<Object>()
+	JtableJson(String rslt , List<Object> rec, int Trc){
 		Result = rslt
-		Records.add(rec)
-		
+		Records = rec
+		TotalRecordCount=Trc
 	}
 	
 	

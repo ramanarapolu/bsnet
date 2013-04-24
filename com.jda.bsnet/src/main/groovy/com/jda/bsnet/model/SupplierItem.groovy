@@ -1,8 +1,9 @@
 package com.jda.bsnet.model
 
 class SupplierItem {
+	String _id
 	String orgName //org as supplier
 	String item
-	String promoPrice
+	double promoPrice
 	String deliveryWindow
 }

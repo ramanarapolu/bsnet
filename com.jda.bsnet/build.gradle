@@ -8,9 +8,9 @@ apply plugin: 'jetty'
 sourceCompatibility = 1.7
 version = '1.0'
 jar {
-    manifest {
-        attributes 'Implementation-Title': 'bsnet', 'Implementation-Version': version
-    }
+	manifest {
+		attributes 'Implementation-Title': 'bsnet', 'Implementation-Version': version
+	}
 }
 project.ext {
 	groovyVersion = '2.0.6'
@@ -21,7 +21,7 @@ project.ext {
 	commonsLangVersion = '3.+'
 	slf4jVersion = '1.7.2'
 	logbackVersion = '1.0.11'
-	jacksonVersion = '2.+'
+	jacksonVersion = '2.1.4'
 	jerseyVersion = '2.0-m12'
 	jersey1Version = '1.8'
 	jaxRsVersion = "2.0-m15"
@@ -33,11 +33,15 @@ project.ext {
 }
 
 repositories {
-    mavenCentral()
+	//flatDir name:'localFileSystemRepository', dirs: 'lib'
+	mavenCentral()
 }
 
 dependencies {
 
+	//compile ':metrics.collector-1.1.0-pre4'
+	//compile ':test'
+	//compile ':jersey-gf-server-1.17.1'
 	groovy group:'org.codehaus.groovy', name:'groovy-all', version:groovyVersion, transitive:false
 	compile group:'com.yammer.metrics', name:'metrics-core', version:yammerVersion, transitive:false
 	compile group:'com.yammer.metrics', name:'metrics-servlet', version:yammerVersion, transitive:false
@@ -64,7 +68,7 @@ dependencies {
 	compile group:'com.fasterxml.jackson.core', name:'jackson-core', version:jacksonVersion, transitive:false
 	compile group:'com.fasterxml.jackson.core', name:'jackson-annotations', version:jacksonVersion, transitive:false
 	compile group:'com.fasterxml.jackson.core', name:'jackson-databind', version:jacksonVersion, transitive:false
-	compile group:'com.fasterxml.jackson.datatype', name:'jackson-datatype-joda', version:jacksonVersion, transitive:false
+	compile group:'com.fasterxml.jackson.datatype', name:'jackson-datatype-joda', version:'2.1.2', transitive:false
 
 	compile group:'org.slf4j', name:'slf4j-api', version:slf4jVersion, transitive:false
 	//compile group:'org.apache.logging.log4j', name:'log4j-api', version:'2.0-beta4', transitive:false
@@ -84,6 +88,9 @@ dependencies {
 	compile group:'org.glassfish.jersey.media', name:'jersey-media-json', version:'2.+', transitive:true
 	compile group:'org.glassfish.jersey.media', name:'jersey-media-json-jackson', version:jerseyVersion, transitive:true
 	compile group:'org.glassfish.jersey.ext', name:'jersey-servlet-portability', version:jerseyVersion, transitive:false
+	//compile group:'com.sun.jersey.glassfish.v3.osgi', name:'jersey-gf-bundle', version:'1.2'
+	//compile group:'com.sun.jersey.glassfish.v3.osgi', name:'jersey-gf-server', version:'1.17.1'
+
 	compile group:'javax.ws.rs', name:'javax.ws.rs-api', version:jaxRsVersion, transitive:false
 	//compile group:'com.sun.jersey', name:'jersey-bundle', version:'1.17.1'
 	//compile group:'com.sun.jersey', name:'jersey-bundle', version:'1.10'
@@ -92,12 +99,15 @@ dependencies {
 
 	compile group:'javax.servlet', name:'javax.servlet-api', version:"3.+", transitive:false
 
-    testCompile group: 'junit', name: 'junit', version: '4.+'
+	testCompile group: 'junit', name: 'junit', version: '4.+'
+
+
+
 }
 
 
 test {
-    systemProperties 'property': 'value'
+	systemProperties 'property': 'value'
 }
 jettyRun {
 	httpPort = 8459
@@ -137,9 +147,9 @@ jettyStop {
 }
 
 uploadArchives {
-    repositories {
-       flatDir {
-           dirs 'repos'
-       }
-    }
+	repositories {
+	   flatDir {
+		   dirs 'repos'
+	   }
+	}
 }

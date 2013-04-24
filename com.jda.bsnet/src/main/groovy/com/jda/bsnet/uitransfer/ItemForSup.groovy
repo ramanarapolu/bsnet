@@ -1,6 +1,7 @@
 package com.jda.bsnet.uitransfer
 
 class ItemForSup {
+	String _id
 	String itemName
 	String description
 	Double listprice
