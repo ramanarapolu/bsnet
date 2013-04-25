@@ -4,13 +4,13 @@ import static javax.ws.rs.core.MediaType.*
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
-import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.Context
+import javax.ws.rs.core.Response
 
 import net.vz.mongodb.jackson.DBCursor
 import net.vz.mongodb.jackson.DBQuery
@@ -275,28 +275,22 @@ class SupplierItemResource {
 			throw new InternalServerErrorException(e)
 		}
 	}
-
 	@POST
 	@Path("requestBuyers")
 	@Produces(APPLICATION_JSON)
-	@Consumes(APPLICATION_JSON)
-	List<BSRelationState> requestBuyersForRelation(@Context HttpServletRequest req,List<BSRelationState> bsRelationList) {
-
+	List<BSRelationState> requestBuyersForRelation(@Context HttpServletRequest req) {
 		HttpSession session = req.getSession();
 		String orgName = session.getAttribute("orgName")
-		bsRelationList.each { BSRelationState bs ->
-			Organization buyerOrg = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).findOne(DBQuery.is("orgName",bs.buyerName))
-			String adminMailId = BsnetUtils.getAdminMailId(buyerOrg.orgName)
-			Properties bsNetProp = BsnetDatabase.getInstance().getBsnetServerConfig()
-			String body=bsNetProp.get("email.reqbuyer.body").toString();
-			String approveLink = bsNetProp.get("bsnet.server.url").toString();
-			approveLink=approveLink.replace("ITEM",bs.item).replace("ID",buyerOrg._id).replace("SUPORG", orgName).replace("BUYORG", buyerOrg.orgName)
-			String link="http://"+bsNetProp.getProperty("cimix.server.ip")+":"+bsNetProp.getProperty("cimix.server.port")+approveLink
-			body=body.replace("ITEM", bs.item)+approveLink
-			body=body+bsNetProp.get("email.reqbuyer.signature");
-			BsnetUtils.sendMail(adminMailId, bsNetProp.get("email.reqbuyer.subject").toString(), body.toString())
-		}
-
+		Organization buyerOrg = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).findOne(DBQuery.is("orgName",req.getAttribute("buyerName")))
+		String adminMailId = BsnetUtils.getAdminMailId(buyerOrg.orgName)
+		Properties bsNetProp = BsnetDatabase.getInstance().getBsnetServerConfig()
+		String body=bsNetProp.get("email.reqbuyer.body").toString();
+		String approveLink = bsNetProp.get("bsnet.server.url").toString();
+		approveLink=approveLink.replace("ITEM",req.getAttribute("item")).replace("ID",buyerOrg._id).replace("SUPORG", orgName).replace("BUYORG", buyerOrg.orgName)
+		String link="http://"+bsNetProp.getProperty("cimix.server.ip")+":"+bsNetProp.getProperty("cimix.server.port")+approveLink
+		body=body.replace("ITEM", req.getAttribute("item"))+approveLink
+		body=body+bsNetProp.get("email.reqbuyer.signature");
+		BsnetUtils.sendMail(adminMailId, bsNetProp.get("email.reqbuyer.subject").toString(), body.toString())
 	}
 
 }
