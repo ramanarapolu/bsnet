@@ -70,6 +70,7 @@ class LoginResource {
 
 							HttpSession session = req.getSession(true);
 							session.setAttribute("orgName", user.orgName)
+							session.setAttribute("userName", user.username)
 						}
 
 					}else {

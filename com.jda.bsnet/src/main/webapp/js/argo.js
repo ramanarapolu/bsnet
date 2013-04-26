@@ -52,6 +52,7 @@ $(document).ready(function() {
 
 	request.done(function(msg) {
 		$("#argohtmlcontent").html(msg);
+			onloadFun()
 	});
 
 	/* login submit function */

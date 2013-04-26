@@ -7,8 +7,23 @@
 		<title>ARGO</title>
 		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css" />
 		<link rel="stylesheet" type="text/css" href="css/argo.css">
+<script>
+var currentUser ="";
+var isItInSession = false;
+function onloadFun(){
+currentUser = "<%=session.getAttribute("userName")%>";
+if(currentUser != null && currentUser != "" && currentUser != "null" ){
+isItInSession = true ;
+}
+if(isItInSession){
+document.getElementById("loginForm").username.value=currentUser;
+$('form#loginForm').submit();
+}}
+</script>
+
+
 	</head>
-	<body>
+	<body >
 		<div id="argoheader"><jsp:include page="headermain.jsp" /></div>
 		<div id="argobody" class="marginTop10"><jsp:include page="login.jsp" /></div>
 		<div id="argofooter"><jsp:include page="footer.jsp" /></div>
