@@ -1,37 +1,23 @@
-<link rel="stylesheet" type="text/css"
-	href="jtable/themes/metro/blue/jtable.min.css" />
-<link rel="stylesheet" type="text/css"
-	href="css/ajaxfileupload.css" />
+<link rel="stylesheet" type="text/css" href="css/ajaxfileupload.css" />
 
 <div id="uploadDataFromFiles">
 	<span class="floatright">
-		<div class="uploadHead">
-			<span class="textFont" >Upload files</span>
-		</div> <img id="loading" src="img/loading.gif" style="display: none;">
+		<div class="uploadHead"><span class="textFont">Upload files</span></div> 
 		<form name="form" action="" method="POST"
 			enctype="multipart/form-data">
-			<table cellpadding="0" cellspacing="0" class="tableForm">
-				<tbody>
-					<tr>
-						<td><input id="fileToUpload" type="file" size="45"
-							name="fileToUpload" class="input"></td>
-					</tr>
-					<tr>
-						<td>Please select a file and click Upload button</td>
-					</tr>
-				</tbody>
-				<tfoot>
-					<tr>
-						<td><button class="button" id="buttonUpload"
-								onclick="return ajaxFileUpload();">Upload</button></td>
-					</tr>
-				</tfoot>
-			</table>
+			<span class="textFont textBlack font14">Please select a file and click Upload button</span>
+			<div>
+				<span><input id="fileToUpload" type="file" size="45" name="fileToUpload" class="input"></span>
+				<span>
+					<button class="button uploadBtn textFont" id="buttonUpload" onclick="return ajaxFileUpload();">Upload</button>
+					<img id="loading" src="img/loading.gif" class="hideBlock" />
+				</span>
+			</div>
 		</form>
 	</span>
 </div>
-<div id="uploadSingleItem" class="marginTop80"></div>
-<script type="text/javascript" src="jtable/jquery.jtable.min.js"></script>
+<div id="uploadSingleItem" class="marginTop30"></div>
+
 <script type="text/javascript" src="js/ajaxfileupload.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -82,40 +68,24 @@
 	function ajaxFileUpload() {
 		//starting setting some animation when the ajax starts and completes
 		$("#loading").ajaxStart(function() {
-			$(this).show();
+			$("#buttonUpload").addClass("hideBlock");
+			$(this).removeClass("hideBlock");
 		}).ajaxComplete(function() {
-			$(this).hide();
+			$(this).addClass("hideBlock");
+			$("#buttonUpload").removeClass("hideBlock");
 		});
 
-		/*
-		    prepareing ajax file upload
-		    url: the url of script file handling the uploaded files
-		                fileElementId: the file type of input element id and it will be the index of  $_FILES Array()
-		    dataType: it support json, xml
-		    secureuri:use secure protocol
-		    success: call back function when the ajax complete
-		    error: callback function when the ajax failed
-
-		 */
 		$.ajaxFileUpload({
 			url : 'bsnet/item/uploadItems',
 			secureuri : false,
 			fileElementId : 'fileToUpload',
-			dataType : 'json',
 			success : function(data, status) {
-				if (typeof (data.error) != 'undefined') {
-					if (data.error != '') {
-						alert(data.error);
-					} else {
-						alert(data.msg);
-					}
-				}
+				$('#uploadSingleItem').jtable('load');
 			},
 			error : function(data, status, e) {
-				alert(e);
+				console.log("in error..."+e);
 			}
 		})
 		return false;
-
 	}
 </script>

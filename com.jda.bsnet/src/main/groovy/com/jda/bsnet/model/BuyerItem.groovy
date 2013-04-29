@@ -1,6 +1,7 @@
 package com.jda.bsnet.model
 
 class BuyerItem {
-	String orgName //org as Buyer, represents buyer intreseted items.
+	String _id
+	String orgName //org as Buyer, represents buyer interested items.
 	String item
 }

@@ -6,6 +6,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>ARGO</title>
 		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css" />
+		<link rel="stylesheet" type="text/css" href="jtable/themes/metro/blue/jtable.min.css" />
 		<link rel="stylesheet" type="text/css" href="css/argo.css">
 <script>
 var currentUser ="";
@@ -31,5 +32,6 @@ $('form#loginForm').submit();
 	</body>
 	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui.js"></script>
+	<script type="text/javascript" src="jtable/jquery.jtable.min.js"></script>
 	<script type="text/javascript" src="js/argo.js"></script>
 </html>

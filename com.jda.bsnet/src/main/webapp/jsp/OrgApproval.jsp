@@ -1,8 +1,7 @@
 <title>ARGO</title>
 
-<link rel="stylesheet" type="text/css" href="jtable/themes/metro/blue/jtable.min.css" />
 <div id="OrgTableContainer"></div>
-<script type="text/javascript" src="jtable/jquery.jtable.min.js"></script>
+
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#OrgTableContainer').jtable({
