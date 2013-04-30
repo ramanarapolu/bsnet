@@ -32,9 +32,7 @@ import com.jda.bsnet.uitransfer.JtableOptionsResponse
 import com.jda.bsnet.uitransfer.JtableResponse
 import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
-import net.vz.mongodb.jackson.WriteResult
-import com.mongodb.BasicDBObject
-import org.bson.types.ObjectId
+import com.yammer.metrics.annotation.Timed
 
 
 @Path("/buyerItem")
@@ -391,10 +389,10 @@ class BuyerItemResource {
 
 		JtableJson buyerItemSupplierList(@Context HttpServletRequest req){
 			List<BsRelation> suppliers = null
-			BsRelation bsRelation = null 
-			String orgName =  req.getSession().getAttribute("orgName")			
-			
-			
+			BsRelation bsRelation = null
+			String orgName =  req.getSession().getAttribute("orgName")
+
+
 			BasicDBObject andQuery = new BasicDBObject();
 			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 			obj.add(new BasicDBObject("item", req.getParameter("item")	));
@@ -406,8 +404,8 @@ class BuyerItemResource {
 				if(suppCur != null) {
 					suppliers = new ArrayList()
 					while(suppCur.hasNext()){
-						bsRelation = (BsRelation) suppCur.next();						
-						suppliers.add(bsRelation) 
+						bsRelation = (BsRelation) suppCur.next();
+						suppliers.add(bsRelation)
 					}
 				}
 			}catch(MongoException e){
@@ -433,7 +431,7 @@ class BuyerItemResource {
 				String supplier
 				String buyer
 				String item
-				
+
 				bsRelation.supplier = req.getParameter("supplierAdd")
 				bsRelation.item = req.getParameter("item")
 				bsRelation.buyer = orgName
@@ -493,44 +491,44 @@ class BuyerItemResource {
 			try {
 				HttpSession session = req.getSession();
 				String orgName = session.getAttribute("orgName")
-				String item = req.getParameter("item")				
-				
-				// Getting buyer-supp relations				
+				String item = req.getParameter("item")
+
+				// Getting buyer-supp relations
 				BasicDBObject andQuery = new BasicDBObject();
 				List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 				obj.add(new BasicDBObject("item", item	));
 				obj.add(new BasicDBObject("buyer", orgName));
 				andQuery.put('$and', obj);
 				BsRelation bsr = null
-				List<String> bsrList = new ArrayList();			
-					
+				List<String> bsrList = new ArrayList();
+
 					DBCursor<BsRelation> bsrCur = BsnetDatabase.getInstance().getJacksonDBCollection(BsRelation.class).find(andQuery)
-					if(bsrCur != null) {						
+					if(bsrCur != null) {
 						while(bsrCur.hasNext()){
 							bsr = (BsRelation) bsrCur.next();
 							bsrList.add(bsr.supplier)
 						}
-					}			
-				
-				// Getting suppliers list 
+					}
+
+				// Getting suppliers list
 					List<SupplierItem> suppliersList = new ArrayList();
 					SupplierItem suppItem = null;
 					JtableOptions options = null
 					DBCursor<SupplierItem> suppCur = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).find(DBQuery.is("item",item))
 					if(suppCur!=null){
-					while(suppCur.hasNext()){						
+					while(suppCur.hasNext()){
 						suppItem = (SupplierItem) suppCur.next()
-						suppliersList.add(suppItem)							
+						suppliersList.add(suppItem)
 						if(!bsrList.contains(suppItem.orgName)) {
 							options = new JtableOptions()
 							options.displayText = suppItem.orgName
 							options.value = suppItem.orgName
 							//	count++
 							result.add(options)
-						}									
+						}
 					}
-				}			
-	
+				}
+
 			}catch(MongoException e){
 				throw new InternalServerErrorException(e)
 			}
