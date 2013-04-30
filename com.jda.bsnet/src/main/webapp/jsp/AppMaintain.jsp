@@ -1,0 +1,1 @@
+<a href="http://localhost:8459/bsnet/metrics/threads"  target=_blank>Thread dump</a>

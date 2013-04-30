@@ -11,7 +11,7 @@
 				addNewRecord: 'Add New Item'
 			},
 			paging: true, 
-			title : 'Add Item to be Supplied',
+			title : 'Buyer Items',
 			//	openChildAsAccordion: true, 
 			actions : {
 				listAction: 'bsnet/buyerItem/buyerItemlistAll',
@@ -35,7 +35,7 @@
                     create: false,
                     display: function (studentData) {
                         //Create an image that will be used to open child table
-                        var $img = $('<img src="http://www.jtable.org/Content/images/Misc/list_metro.png" title="Manage Suppliers" />');
+                        var $img = $('<img src="img/list_metro.png" title="Manage Suppliers" />');
                         //Open child table when user clicks the image
                         $img.click(function () {
                             $('#BuyerItemDetails').jtable('openChildTable',
@@ -64,11 +64,19 @@
                                             supplier: {
 												title: 'Supplier Name',
                                                 //key: true,
-                                                create: true,
+                                                create: false,
                                                 //edit: false,
                                                 list: true
-                                            }
-                                        }
+                                            },
+											supplierAdd: {
+													create: true,
+													edit: false,
+													list: false,
+													title: "Supplier Name",
+													width:"20%",
+													options: 'bsnet/buyerItem/optionsListSupplier?item='+ studentData.record.item
+												}
+		                                        }
                                     }, function (data) { //opened handler
                                         data.childTable.jtable('load');
                                     });
