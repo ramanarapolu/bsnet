@@ -33,14 +33,17 @@
 					width:"20%",
 					options: 'bsnet/supplierItem/optionsList'
 				},
-
     			itemName: {
                    title: "Item Name",
 	    		   width:"20%",
     	   		   create: false,
                    edit: false,
 				},
-			
+				category: {
+					title: "Category",
+					width: "10%",
+					edit: false
+				},			
 				listprice: {
 					title: "Price",
 					width: "10%"

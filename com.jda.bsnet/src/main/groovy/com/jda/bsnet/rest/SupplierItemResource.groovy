@@ -55,14 +55,16 @@ class SupplierItemResource {
 			supItem.deliveryWindow = req.getParameter("deliveryWindow")
 			if(req.getParameter("listprice") != null && req.getParameter("listprice")!= "")
 				supItem.promoPrice = Double.parseDouble(req.getParameter("listprice"))
+			DBCursor<Item> item = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find(DBQuery.is("item",supItem.item))
+			supItem.category = item.current.category
+			
 			storeList.add(supItem)
-			WriteResult<Item, String> result = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).insert(storeList)//(DBQuery.is("approved",false))
+			WriteResult<Item, String> result = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).insert(storeList)
 
 			DBCursor<Item> supCur = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).find(DBQuery.is("item",supItem.item))
 			supItem = (SupplierItem) supCur.next();
 
 			return  new JtableAddResponse("OK", supItem)
-
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
