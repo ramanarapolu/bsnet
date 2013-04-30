@@ -3,6 +3,7 @@ package com.jda.bsnet.rest
 import static javax.ws.rs.core.MediaType.*
 
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpSession
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.InternalServerErrorException
@@ -14,41 +15,46 @@ import javax.ws.rs.core.Response
 
 import net.vz.mongodb.jackson.DBCursor
 import net.vz.mongodb.jackson.DBQuery
+import net.vz.mongodb.jackson.WriteResult
 
 import org.bson.types.ObjectId
 
 import com.jda.bsnet.model.BsRelation
-import com.jda.bsnet.model.User
+import com.jda.bsnet.model.BuyerItem
+import com.jda.bsnet.model.Item
 import com.jda.bsnet.model.Organization
 import com.jda.bsnet.model.SupplierItem
-import com.jda.bsnet.uitransfer.JtableAddResponse;
-import com.jda.bsnet.uitransfer.JtableJson;
-import com.jda.bsnet.uitransfer.JtableResponse;
-import com.mongodb.MongoException
-import net.vz.mongodb.jackson.WriteResult
+import com.jda.bsnet.model.User
+import com.jda.bsnet.uitransfer.JtableAddResponse
+import com.jda.bsnet.uitransfer.JtableJson
+import com.jda.bsnet.uitransfer.JtableOptions
+import com.jda.bsnet.uitransfer.JtableOptionsResponse
+import com.jda.bsnet.uitransfer.JtableResponse
 import com.mongodb.BasicDBObject
-import org.bson.types.ObjectId
+import com.mongodb.MongoException
+import com.yammer.metrics.annotation.Timed
 
 
 @Path("/buyerItem")
 
 class BuyerItemResource {
-	
-	
+
+
 	@POST
+	@Timed
 	@Path("createBuyerUser")
 	@Produces(APPLICATION_JSON)
 	JtableAddResponse createBuyerUser(@Context HttpServletRequest req) {
 		User user = new User();
-		
+
 		user.username = req.getParameter("username")
 		user.password = req.getParameter("password")
 		user.emailId = req.getParameter("emailId")
 		user.mobileNo = req.getParameter("mobileNo")
 		user.orgName = req.getSession().getAttribute("orgName")
 		user.orgAdmin = false
-		
-		
+
+
 		if (user != null)
 		{
 			try {
@@ -71,6 +77,7 @@ class BuyerItemResource {
 	}
 
 	@POST
+	@Timed
 	@Path("buyerUserlistAll")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
@@ -92,7 +99,7 @@ class BuyerItemResource {
 
 		println jtStartIndex+"and"+jtPageSize
 		try {
-			//DBCursor<Organization> orgCur = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).find(DBQuery.is("approved",false))			 
+			//DBCursor<Organization> orgCur = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).find(DBQuery.is("approved",false))
 			DBCursor<User> userCur = BsnetDatabase.getInstance().getJacksonDBCollection(User.class).find(DBQuery.is("orgName",orgName)).skip(jtStartIndex).limit(jtPageSize)
 			if(userCur != null) {
 				users = new ArrayList()
@@ -109,6 +116,7 @@ class BuyerItemResource {
 	}
 
 	@POST
+	@Timed
 	@Path("buyerUserUpdate")
 	@Produces(APPLICATION_JSON)
 	JtableResponse buyerUserUpdate(@Context HttpServletRequest req) {
@@ -119,7 +127,7 @@ class BuyerItemResource {
 		user.password = req.getParameter("password")
 		user.emailId = req.getParameter("emailId")
 		user.mobileNo = req.getParameter("mobileNo")
-	
+
 
 
 			try {
@@ -140,14 +148,15 @@ class BuyerItemResource {
 
 		return  new JtableResponse("OK")
 	}
-	
+
 	@POST
+	@Timed
 	@Path("buyerUserDelete")
 	@Produces(APPLICATION_JSON)
 	JtableResponse buyerUserDelete (@Context HttpServletRequest req){
 		User user = new User();
 		user._id = req.getParameter("_id")
-		
+
 
 		//deleting from database
 		try{
@@ -166,9 +175,10 @@ class BuyerItemResource {
 
 	}
 
-	
-	
+
+
 	@POST
+	@Timed
 	@Path("storeBuyerItems")
 	@Produces(APPLICATION_JSON)
 	@Consumes(APPLICATION_JSON)
@@ -182,6 +192,7 @@ class BuyerItemResource {
 	}
 
 	@GET
+	@Timed
 	@Path("getBuyerItems")
 	@Produces(APPLICATION_JSON)
 	List<SupplierItem> getBuyerItems() {
@@ -203,6 +214,7 @@ class BuyerItemResource {
 	}
 
 	@GET
+	@Timed
 	@Path("approve")
 	@Produces(APPLICATION_JSON)
 	Response approveRelation(@Context HttpServletRequest req) {
@@ -230,5 +242,294 @@ class BuyerItemResource {
 		}
 		return Response.ok().build()
 	}
+
+	@POST
+	@Timed
+	@Path("buyerItemlistAll")
+	@Consumes(APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
+
+	JtableJson buyerItemlistAll(@Context HttpServletRequest req){
+		List<User> buyers = null
+		BuyerItem buyerItem = null
+		String orgName =  req.getSession().getAttribute("orgName")
+		int jtStartIndex=0
+		int jtPageSize=10
+		int TotalRecordCount=10
+
+		if(req.getParameter("jtStartIndex") != null && req.getParameter("jtStartIndex") != "")
+		jtStartIndex =  Integer.parseInt (req.getParameter("jtStartIndex"))
+
+		if(req.getParameter("jtPageSize") != null && req.getParameter("jtPageSize") != "")
+		 jtPageSize = Integer.parseInt (req.getParameter("jtPageSize"))
+
+
+		println jtStartIndex+"and"+jtPageSize
+		try {
+			//DBCursor<Organization> orgCur = BsnetDatabase.getInstance().getJacksonDBCollection(Organization.class).find(DBQuery.is("approved",false))
+			DBCursor<BuyerItem> buyerCur = BsnetDatabase.getInstance().getJacksonDBCollection(BuyerItem.class).find(DBQuery.is("orgName",orgName)).skip(jtStartIndex).limit(jtPageSize)
+			if(buyerCur != null) {
+				buyers = new ArrayList()
+				while(buyerCur.hasNext()){
+					buyerItem = (BuyerItem) buyerCur.next();
+					buyers.add(buyerItem)
+				}
+			}
+		}catch(MongoException e){
+			throw new InternalServerErrorException(e)
+		}
+
+	 return  new JtableJson("OK", buyers,buyers.size())
+	}
+
+
+
+		@POST
+		@Timed
+		@Path("buyerItemCreate")
+		@Produces(APPLICATION_JSON)
+		JtableAddResponse buyerItemCreate(@Context HttpServletRequest req) {
+
+			try {
+				HttpSession session = req.getSession();
+				String orgName = session.getAttribute("orgName")
+				BuyerItem buyerItem = null
+				buyerItem = new BuyerItem()
+				buyerItem.item = req.getParameter("itemName")
+				buyerItem.orgName = orgName
+
+				WriteResult<BuyerItem, String> result = BsnetDatabase.getInstance().getJacksonDBCollection(BuyerItem.class).insert(buyerItem)
+
+				BasicDBObject andQuery = new BasicDBObject();
+				List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+				obj.add(new BasicDBObject("item", buyerItem.item));
+				obj.add(new BasicDBObject("orgName", buyerItem.orgName));
+				andQuery.put('$and', obj);
+
+				buyerItem = BsnetDatabase.getInstance().getJacksonDBCollection(BuyerItem.class).findOne(andQuery)
+
+				return  new JtableAddResponse("OK", buyerItem)
+
+			}catch(MongoException e){
+				throw new InternalServerErrorException(e)
+
+			}
+		}
+
+		@POST
+		@Timed
+		@Path("buyerItemDelete")
+		@Produces(APPLICATION_JSON)
+		JtableResponse buyerItemDelete (@Context HttpServletRequest req){
+			//deleting from database
+			try{
+
+
+				ObjectId objId= new ObjectId(req.getParameter("_id"));
+				BasicDBObject document = new BasicDBObject();
+				document.put("_id", objId);
+				BsnetDatabase.getInstance().getJacksonDBCollection(BuyerItem.class).remove(document)
+
+			}catch(MongoException e){
+				throw new InternalServerErrorException(e)
+			}
+			return  new JtableResponse("OK")
+		}
+
+
+
+		@POST
+		@Timed
+		@Path("optionsList")
+		@Produces(APPLICATION_JSON)
+		JtableOptionsResponse optionsList(@Context HttpServletRequest req) {
+
+			List<JtableOptions> result = new ArrayList()
+			try {
+				HttpSession session = req.getSession();
+				String orgName = session.getAttribute("orgName")
+				BuyerItem buyerItem = null;
+				DBCursor<BuyerItem> buyerCur = BsnetDatabase.getInstance().getJacksonDBCollection(BuyerItem.class).find(DBQuery.is("orgName",orgName))
+				List<String> buyerItems = new ArrayList()
+				if(buyerCur != null) {
+					while(buyerCur.hasNext()){
+						buyerItem = (BuyerItem) buyerCur.next()
+						buyerItems.add(buyerItem.item)
+					}
+				}
+
+				DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find()
+				//ItemForSup itemForSup = null;
+				Item item = null
+				JtableOptions options = null
+				//int count = 1
+				while(itemCur.hasNext()){
+					item  = (Item) itemCur.next()
+					if(!buyerItems.contains(item.itemName)) {
+						options = new JtableOptions()
+						options.displayText = item.itemName
+						options.value = item.itemName
+						//	count++
+						result.add(options)
+					}
+				}
+
+			}catch(MongoException e){
+				throw new InternalServerErrorException(e)
+			}
+			return new JtableOptionsResponse("OK", result)
+		}
+
+
+		@POST
+		@Timed
+		@Path("buyerItemSupplierList")
+		@Consumes(APPLICATION_JSON)
+		@Produces(APPLICATION_JSON)
+
+		JtableJson buyerItemSupplierList(@Context HttpServletRequest req){
+			List<BsRelation> suppliers = null
+			BsRelation bsRelation = null
+			String orgName =  req.getSession().getAttribute("orgName")
+
+			println  req.getSession().getAttribute("item")
+			println orgName
+
+
+			BasicDBObject andQuery = new BasicDBObject();
+			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+			obj.add(new BasicDBObject("item", req.getParameter("item")	));
+			obj.add(new BasicDBObject("buyer", orgName));
+			andQuery.put('$and', obj);
+			try {
+
+				DBCursor<BsRelation> suppCur = BsnetDatabase.getInstance().getJacksonDBCollection(BsRelation.class).find(andQuery)
+				if(suppCur != null) {
+					suppliers = new ArrayList()
+					while(suppCur.hasNext()){
+
+						println "1st"
+						bsRelation = (BsRelation) suppCur.next();
+
+						println bsRelation.getSupplier()
+
+						suppliers.add(bsRelation)
+					}
+				}
+			}catch(MongoException e){
+				throw new InternalServerErrorException(e)
+			}
+
+		 return  new JtableJson("OK", suppliers)
+		}
+
+
+		@POST
+		@Timed
+		@Path("buyerItemSupplierCreate")
+		@Produces(APPLICATION_JSON)
+		JtableAddResponse buyerItemSupplierCreate(@Context HttpServletRequest req) {
+
+			try {
+				HttpSession session = req.getSession();
+				String orgName = session.getAttribute("orgName")
+				BsRelation bsRelation = null
+				bsRelation = new BsRelation()
+
+				String supplier
+				String buyer
+				String item
+
+				bsRelation.supplier = req.getParameter("supplier")
+				bsRelation.item = req.getParameter("item")
+				bsRelation.buyer = orgName
+
+				WriteResult<BsRelation, String> result = BsnetDatabase.getInstance().getJacksonDBCollection(BsRelation.class).insert(bsRelation)
+
+				BasicDBObject andQuery = new BasicDBObject();
+				List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+				obj.add(new BasicDBObject("item", bsRelation.item));
+				obj.add(new BasicDBObject("supplier", bsRelation.supplier));
+				obj.add(new BasicDBObject("buyer", bsRelation.buyer));
+				andQuery.put('$and', obj);
+
+				bsRelation = BsnetDatabase.getInstance().getJacksonDBCollection(BsRelation.class).findOne(andQuery)
+
+				return  new JtableAddResponse("OK", bsRelation)
+
+			}catch(MongoException e){
+				throw new InternalServerErrorException(e)
+
+			}
+		}
+
+
+
+
+		@POST
+		@Timed
+		@Path("buyerItemSupplierDelete")
+		@Produces(APPLICATION_JSON)
+		JtableResponse buyerItemSupplierDelete (@Context HttpServletRequest req){
+			//deleting from database
+			try{
+
+
+				ObjectId objId= new ObjectId(req.getParameter("_id"));
+				BasicDBObject document = new BasicDBObject();
+				document.put("_id", objId);
+				BsnetDatabase.getInstance().getJacksonDBCollection(BsRelation.class).remove(document)
+
+			}catch(MongoException e){
+				throw new InternalServerErrorException(e)
+			}
+			return  new JtableResponse("OK")
+		}
+
+
+
+	//  Not completed
+		@POST
+		@Timed
+		@Path("optionsListSupplier")
+		@Produces(APPLICATION_JSON)
+		JtableOptionsResponse optionsListSupplier(@Context HttpServletRequest req) {
+
+			List<JtableOptions> result = new ArrayList()
+			try {
+				HttpSession session = req.getSession();
+				String orgName = session.getAttribute("orgName")
+				BuyerItem buyerItem = null;
+				DBCursor<BuyerItem> buyerCur = BsnetDatabase.getInstance().getJacksonDBCollection(BuyerItem.class).find(DBQuery.is("orgName",orgName))
+				List<String> buyerItems = new ArrayList()
+				if(buyerCur != null) {
+					while(buyerCur.hasNext()){
+						buyerItem = (BuyerItem) buyerCur.next()
+						buyerItems.add(buyerItem.item)
+					}
+				}
+
+				DBCursor<Item> itemCur = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find()
+				//ItemForSup itemForSup = null;
+				Item item = null
+				JtableOptions options = null
+				//int count = 1
+				while(itemCur.hasNext()){
+					item  = (Item) itemCur.next()
+					if(!buyerItems.contains(item.itemName)) {
+						options = new JtableOptions()
+						options.displayText = item.itemName
+						options.value = item.itemName
+						//	count++
+						result.add(options)
+					}
+				}
+
+			}catch(MongoException e){
+				throw new InternalServerErrorException(e)
+			}
+			return new JtableOptionsResponse("OK", result)
+		}
+
 
 }

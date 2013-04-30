@@ -33,12 +33,14 @@ import com.jda.bsnet.uitransfer.JtableResponse
 import com.jda.bsnet.util.BsnetUtils
 import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
+import com.yammer.metrics.annotation.Timed;
 
 
 @Path("/supplierItem")
 class SupplierItemResource {
 
 	@POST
+	@Timed
 	@Path("create")
 	@Produces(APPLICATION_JSON)
 	JtableAddResponse create(@Context HttpServletRequest req) {
@@ -68,6 +70,7 @@ class SupplierItemResource {
 
 
 	@POST
+	@Timed
 	@Path("update")
 	@Produces(APPLICATION_JSON)
 	JtableResponse updateItem(@Context HttpServletRequest req) {
@@ -88,6 +91,7 @@ class SupplierItemResource {
 	}
 
 	@POST
+	@Timed
 	@Path("delete")
 	@Produces(APPLICATION_JSON)
 	JtableResponse deleteItem (@Context HttpServletRequest req){
@@ -111,6 +115,7 @@ class SupplierItemResource {
 	}
 
 	@POST
+	@Timed
 	@Path("optionsList")
 	@Produces(APPLICATION_JSON)
 	JtableOptionsResponse optionsList(@Context HttpServletRequest req) {
@@ -192,6 +197,7 @@ class SupplierItemResource {
 	 }*/
 
 	@POST
+	@Timed
 	@Path("listAll")
 	@Produces(APPLICATION_JSON)
 	JtableJson listAll(@Context HttpServletRequest req) {
@@ -227,6 +233,7 @@ class SupplierItemResource {
 	}
 
 	@POST
+	@Timed
 	@Path("getBSRelationState")
 	@Produces(APPLICATION_JSON)
 	JtableJson getBSRelationState(@Context HttpServletRequest req) {
@@ -276,6 +283,7 @@ class SupplierItemResource {
 		}
 	}
 	@POST
+	@Timed
 	@Path("requestBuyers")
 	@Produces(APPLICATION_JSON)
 	List<BSRelationState> requestBuyersForRelation(@Context HttpServletRequest req,List<BSRelationState> bsRelationList) {

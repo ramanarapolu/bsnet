@@ -33,7 +33,7 @@ project.ext {
 }
 
 repositories {
-	//flatDir name:'localFileSystemRepository', dirs: 'lib'
+	flatDir name:'localFileSystemRepository', dirs: 'lib'
 	mavenCentral()
 }
 
@@ -42,6 +42,14 @@ dependencies {
 	//compile ':metrics.collector-1.1.0-pre4'
 	//compile ':test'
 	//compile ':jersey-gf-server-1.17.1'
+
+	//compile ':mimepull-1.6'
+
+	compile group:'com.sun.jersey', name:'jersey-bundle', version:'1.17.1'
+	compile group:'com.sun.jersey.contribs', name:'jersey-multipart', version:'1.17.1'
+	compile group:'org.jvnet', name:'mimepull', version:'1.6'
+
+
 	groovy group:'org.codehaus.groovy', name:'groovy-all', version:groovyVersion, transitive:false
 	compile group:'com.yammer.metrics', name:'metrics-core', version:yammerVersion, transitive:false
 	compile group:'com.yammer.metrics', name:'metrics-servlet', version:yammerVersion, transitive:false
@@ -84,7 +92,7 @@ dependencies {
 	//compile group:'org.glassfish.jersey.core', name:'jersey-common', version:'2.0-m12-1'
 	compile group:'org.glassfish.jersey.core', name:'jersey-server', version:jerseyVersion
 	compile group:'org.glassfish.jersey.containers', name:'jersey-container-servlet-core', version:jerseyVersion, transitive:false
-	compile group:'org.glassfish.jersey.media', name:'jersey-media-multipart', version:jerseyVersion, transitive:true
+	//	compile group:'org.glassfish.jersey.media', name:'jersey-media-multipart', version:jerseyVersion, transitive:true
 	compile group:'org.glassfish.jersey.media', name:'jersey-media-json', version:'2.+', transitive:true
 	compile group:'org.glassfish.jersey.media', name:'jersey-media-json-jackson', version:jerseyVersion, transitive:true
 	compile group:'org.glassfish.jersey.ext', name:'jersey-servlet-portability', version:jerseyVersion, transitive:false
@@ -100,15 +108,13 @@ dependencies {
 	compile group:'javax.servlet', name:'javax.servlet-api', version:"3.+", transitive:false
 
 	testCompile group: 'junit', name: 'junit', version: '4.+'
+	compile group:'org.jsoup', name:'jsoup', version:'1.6.2'
 
-
-
+	//compile ':jersey-json-1.17.1'
 }
 
 
-test {
-	systemProperties 'property': 'value'
-}
+test { systemProperties 'property': 'value' }
 jettyRun {
 	httpPort = 8459
 	scanIntervalSeconds = 1
@@ -121,26 +127,26 @@ jettyRun {
 }
 
 /*jettyRun.doLast {
-	if (getStopPort() != null && getStopPort() > 0 && getStopKey() != null) {
-		Monitor monitor = new Monitor(getStopPort(), getStopKey(), server.getProxiedObject());
-		monitor.start();
-	}
-}*/
+ if (getStopPort() != null && getStopPort() > 0 && getStopKey() != null) {
+ Monitor monitor = new Monitor(getStopPort(), getStopKey(), server.getProxiedObject());
+ monitor.start();
+ }
+ }*/
 /*[jettyRun, jettyRunWar]*.doLast {
-  *//**
-   * THIS IS A WORKAROUND! THE CURRENT VERSION OF THIS TASK DOESN'T START A WATCHER IN DAEMON MODE
-   *
-   * If starting the monitor fails, it may be because the jetty task was updated to fix this issue
-   * When that happens, we shouldn't need the custom task any more
-   *
-   * Copied From: AbstractJettyRunTask
-   *//*
-   if (getStopPort() != null && getStopPort() > 0 && getStopKey() != null) {
-	  Monitor monitor = new Monitor(getStopPort(), getStopKey(), server.getProxiedObject());
-	  monitor.start();
-   }
-}
-*/
+ *//**
+ * THIS IS A WORKAROUND! THE CURRENT VERSION OF THIS TASK DOESN'T START A WATCHER IN DAEMON MODE
+ *
+ * If starting the monitor fails, it may be because the jetty task was updated to fix this issue
+ * When that happens, we shouldn't need the custom task any more
+ *
+ * Copied From: AbstractJettyRunTask
+ *//*
+ if (getStopPort() != null && getStopPort() > 0 && getStopKey() != null) {
+ Monitor monitor = new Monitor(getStopPort(), getStopKey(), server.getProxiedObject());
+ monitor.start();
+ }
+ }
+ */
 jettyStop {
 	stopKey = 'stopKey'
 	stopPort = 8460
@@ -148,8 +154,6 @@ jettyStop {
 
 uploadArchives {
 	repositories {
-	   flatDir {
-		   dirs 'repos'
-	   }
+		flatDir { dirs 'repos' }
 	}
 }

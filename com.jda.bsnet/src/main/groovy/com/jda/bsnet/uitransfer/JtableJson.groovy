@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 
-public class JtableJson {
+public class JtableJson implements Serializable{
 
-	 
-	String Result	
+
+	String Result
 	List<Object> Records
 	int TotalRecordCount
 
@@ -16,13 +16,13 @@ public class JtableJson {
 		Result = rslt
 		Records = rec
 	}
-	
+
 	JtableJson(String rslt , List<Object> rec, int Trc){
 		Result = rslt
 		Records = rec
 		TotalRecordCount=Trc
 	}
-	
-	
+
+
 }
 

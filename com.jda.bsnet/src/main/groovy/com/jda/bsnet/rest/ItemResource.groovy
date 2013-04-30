@@ -9,7 +9,6 @@ import javax.ws.rs.Consumes
 import javax.ws.rs.GET
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.POST
-import javax.ws.rs.PUT
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.Context
@@ -21,8 +20,9 @@ import net.vz.mongodb.jackson.DBQuery
 import net.vz.mongodb.jackson.WriteResult
 
 import org.bson.types.ObjectId
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition
-import org.glassfish.jersey.media.multipart.FormDataParam
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.FormDataParam;
+
 
 import com.jda.bsnet.csv.CsvBatch
 import com.jda.bsnet.csv.CsvBatchTaskCallable
@@ -33,8 +33,9 @@ import com.jda.bsnet.uitransfer.JtableJson
 import com.jda.bsnet.uitransfer.JtableResponse
 import com.jda.bsnet.util.CsvUtils
 import com.mongodb.BasicDBObject
-
 import com.mongodb.MongoException
+import com.sun.jersey.core.header.FormDataContentDisposition
+import com.yammer.metrics.annotation.Timed
 
 @Path("/item")
 @Slf4j
@@ -44,6 +45,7 @@ class ItemResource {
 
 
 	@GET
+	@Timed
 	@Path("hello")
 	@Produces(TEXT_PLAIN)
 	//Example URL:  http://api.jda.com/reco/v1/users/hello
@@ -52,6 +54,7 @@ class ItemResource {
 	}
 
 	@POST
+	@Timed
 	@Path("create")
 	@Produces(APPLICATION_JSON)
 	JtableAddResponse createItem(@Context HttpServletRequest req) {
@@ -84,6 +87,7 @@ class ItemResource {
 	}
 
 	@POST
+	@Timed
 	@Path("update")
 	@Produces(APPLICATION_JSON)
 	JtableResponse updateItem(@Context HttpServletRequest req) {
@@ -119,6 +123,7 @@ class ItemResource {
 
 
 	@POST
+	@Timed
 	@Path("delete")
 	@Produces(APPLICATION_JSON)
 	JtableResponse deleteItem (@Context HttpServletRequest req){
@@ -145,11 +150,12 @@ class ItemResource {
 
 
 	@POST
+	@Timed
 	@Path("listAll")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
 
-	JtableJson getPendingOrgs(@Context HttpServletRequest req){
+	JtableJson listAll(@Context HttpServletRequest req){
 		List<Item> items = null
 		Item item = null
 		int jtStartIndex=0
@@ -184,6 +190,56 @@ class ItemResource {
 
 
 	@POST
+	@Timed
+	@Path("/uploadItems")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	//@Consumes("multipart/form-data;boundary=\"frontier\"")
+	@Produces(APPLICATION_JSON)
+	Response createBulkItems(@FormDataParam("fileToUpload") FormDataBodyPart bodyPart) {
+
+		FormDataContentDisposition fileDetail = bodyPart.getFormDataContentDisposition();
+		InputStream uploadedInputStream = bodyPart.getValueAs(InputStream.class);
+		println "entered file upload function"
+		String uploadedFileLocation = BsnetDatabase.getInstance().getBsnetProp().getProperty("bsnet.itemfile.loc") + fileDetail.getFileName();
+		saveToFile(uploadedInputStream, uploadedFileLocation);
+		long startTime = System.currentTimeMillis();
+		int totalRows = -1;
+		int numBatches = -1;
+		try {
+			int startRow = 0;
+			int endRow = 0;
+			totalRows = CsvUtils.getRowCount(uploadedFileLocation);
+			numBatches = totalRows % CsvUtils.BATCH_SIZE == 0 ? (totalRows
+					/ CsvUtils.BATCH_SIZE)
+					: (totalRows / CsvUtils.BATCH_SIZE + 1);
+			List<CsvBatchTaskCallable> batchList = new ArrayList()
+			for (int i = 1; i <= numBatches; ++i) {
+				startRow = (i - 1) * CsvUtils.BATCH_SIZE + 1;
+				endRow = i * CsvUtils.BATCH_SIZE;
+				if (endRow > totalRows) {
+					endRow = totalRows;
+				}
+				CsvBatch csvBatch = new CsvBatch(uploadedFileLocation, startRow, endRow,
+						CsvUtils.BATCH_SIZE);
+				CsvBatchTaskCallable callable = new CsvBatchTaskCallable(
+						csvBatch);
+				batchList.add(callable)
+			}
+			GParsPool.withPool(CsvUtils.MAX_THREAD_POOL_SIZE) {
+				batchList.eachParallel{CsvBatchTaskCallable callable ->
+					callable.executeBatch()
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace()
+		} finally {
+			new File(uploadedFileLocation).delete()
+		}
+		return Response.ok().build()
+	}
+
+
+	/*@POST
 	@Path("/uploadItems")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(APPLICATION_JSON)
@@ -226,10 +282,11 @@ class ItemResource {
 			new File(uploadedFileLocation).delete()
 		}
 		return Response.ok().build()
-	}
+	}*/
 
 
 	@POST
+	@Timed
 	@Path("getSuppliers")
 	@Produces(APPLICATION_JSON)
 	@Consumes(APPLICATION_JSON)

@@ -15,15 +15,25 @@ import javax.ws.rs.core.Response
 
 import net.vz.mongodb.jackson.DBQuery
 
+import org.jsoup.nodes.Document
+
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.jda.bsnet.model.MenuMetaData
 import com.jda.bsnet.model.Organization
 import com.jda.bsnet.model.User
+import com.jda.bsnet.uitransfer.JtableJson
 import com.jda.bsnet.uitransfer.LoginResponse
 import com.jda.bsnet.uitransfer.MenuUrlPair
+import com.jda.bsnet.uitransfer.ResourceMetricTransfer;
 import com.jda.bsnet.uitransfer.UserDetails
-import com.jda.bsnet.util.BsnetUtils
+import com.jda.bsnet.uitransfer.metrics.ResourceMethod
+import com.jda.bsnet.uitransfer.metrics.ResourceMetric
+import com.jda.bsnet.util.JsoupUtils
 import com.jda.bsnet.util.RoleDef
 import com.mongodb.MongoException
+import com.yammer.metrics.annotation.Timed
 
 @Path("/login")
 class LoginResource {
@@ -39,7 +49,71 @@ class LoginResource {
 		return "Hello"
 	}
 
+
+
 	@POST
+	@Path("getResourceNames")
+	@Produces(APPLICATION_JSON)
+	JtableJson getResourceNames(){
+
+		Properties p = BsnetDatabase.getInstance().getBsnetProp()
+		String url = "http://"+p.getProperty("bsnet.server.ip")+":"+p.getProperty("bsnet.server.port")+"/bsnet/metrics/metrics?pretty=true"
+		println ":"+url
+		Document doc = JsoupUtils.getContent(url)
+
+		ObjectMapper objectMapper = new ObjectMapper()
+		objectMapper.registerModule(new JodaModule())
+		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true)
+		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+		Map<String,ResourceMetric> rm = objectMapper.readValue(doc.getElementsByTag("body").text(), Map.class)
+
+		return new JtableJson("OK", rm.keySet().asList())
+	}
+
+
+
+	@POST
+	@Path("getResourceStatsByName")
+	@Consumes(APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
+	//Example URL:  http://api.jda.com/reco/v1/users/hello
+	JtableJson getResourceStatsByName(@Context HttpServletRequest req){
+
+		Properties p = BsnetDatabase.getInstance().getBsnetProp()
+		String url = "http://"+p.getProperty("bsnet.server.ip")+":"+p.getProperty("bsnet.server.port")+"/bsnet/metrics/metrics?pretty=true"
+		String resourceName = req.getAttribute("resourceName")
+		println ":"+resourceName
+		Document doc = JsoupUtils.getContent(url)
+
+		ObjectMapper objectMapper = new ObjectMapper()
+		objectMapper.registerModule(new JodaModule())
+		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true)
+		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+		Map<String,ResourceMetric> rm = objectMapper.readValue(doc.getElementsByTag("body").text(), Map.class)
+
+		ResourceMetric rmByName = rm.get(resourceName)
+
+		Map<String,ResourceMethod> rMap = rmByName.resourceMap
+
+		List<ResourceMetricTransfer> lTrans = new ArrayList<ResourceMetricTransfer>()
+		ResourceMetricTransfer ltransEle = null
+		for(e in rMap) {
+			ltransEle = new ResourceMetricTransfer()
+			ltransEle.methodName = e.key
+			ltransEle.avgResTime = e.value.duration.mean
+			ltransEle.count = e.value.rate.count
+			ltransEle.oneMinRate = e.value.rate.m1
+			ltransEle.fiveMinRate = e.value.rate.m5
+			ltransEle.meanRate = e.value.rate.mean
+			lTrans.add(ltransEle)
+		}
+
+		return new JtableJson("OK", lTrans)
+	}
+
+
+	@POST
+	@Timed
 	@Path("logon")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
@@ -90,6 +164,7 @@ class LoginResource {
 	}
 
 	@POST
+	@Timed
 	@Path("logout")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)

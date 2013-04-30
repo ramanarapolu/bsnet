@@ -43,6 +43,7 @@ class UserResource {
 	}
 
 	@POST
+	@Timed
 	@Path("create")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
@@ -105,6 +106,7 @@ class UserResource {
 		}
 	}
 	@POST
+	@Timed
 	@Path("createUser")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
@@ -136,6 +138,7 @@ class UserResource {
 
 
 	@POST
+	@Timed
 	@Path("getPendingOrgs")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
@@ -159,6 +162,7 @@ class UserResource {
 		return  new JtableJson("OK", orgs)
 	}
 	@POST
+	@Timed
 	@Path("approveOrgs")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
@@ -186,6 +190,7 @@ class UserResource {
 	}
 
 	@POST
+	@Timed
 	@Path("approveOrgs1")
 	@Produces(APPLICATION_JSON)
 	JtableResponse updateOrgs1(@Context HttpServletRequest req) {
@@ -205,6 +210,7 @@ class UserResource {
 
 
 	@GET
+	@Timed
 	@Path("getUserByOrg")
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
