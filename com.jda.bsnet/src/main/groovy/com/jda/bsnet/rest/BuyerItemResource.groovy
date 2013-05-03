@@ -5,6 +5,7 @@ import static javax.ws.rs.core.MediaType.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import javax.ws.rs.Consumes
+import javax.ws.rs.FormParam
 import javax.ws.rs.GET
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.POST
@@ -129,7 +130,6 @@ class BuyerItemResource {
 		user.mobileNo = req.getParameter("mobileNo")
 
 
-
 			try {
 				BasicDBObject source = new BasicDBObject()
 				source.put("_id", new ObjectId(user._id))
@@ -142,7 +142,7 @@ class BuyerItemResource {
 				BsnetDatabase.getInstance().getJacksonDBCollection(User.class).update(source,new BasicDBObject('$set', newDocument))
 
 			}catch(MongoException e){
-
+				e.printStackTrace()
 				throw new InternalServerErrorException(e)
 			}
 

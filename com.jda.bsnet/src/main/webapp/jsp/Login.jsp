@@ -1,6 +1,9 @@
 <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
 <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+
+
 <div class="" id="loginModal">
 	<div class="modal-body joinTab">
 		<div class="well">
@@ -10,10 +13,17 @@
 						Account?</a></li>
 			</ul>
 			<div id="myTabContent" class="tab-content">
+
+
 				<div class="tab-pane active in" id="login">
 					<div class="invisible text-error" id="userloginErrorDiv"></div>
+			<div class="floatLeft" >
+
 					<form class="form-horizontal" id="loginForm">
 						<fieldset>
+
+</br></br></br>
+
 							<div class="control-group">
 								<!-- Username -->
 								<label class="control-label" for="username">Username</label>
@@ -35,9 +45,13 @@
 								<div class="controls">
 									<button class="btn btn-success" id="loginBtn">Login</button>
 								</div>
-							</div>
+							</div>							
+							
+
 						</fieldset>
 					</form>
+</div> <div class="floatLeft videoDiv"><iframe width="420" height="245" src="http://www.youtube.com/embed/faU1BfGf74w"></iframe></div>
+
 				</div>
 				<div class="tab-pane fade" id="create">
 					<div id="userSuccess" class="invisible text-success">User has

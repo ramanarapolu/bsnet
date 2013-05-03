@@ -21,6 +21,9 @@
 .floatRight{
 	float: right;
 }
+.floatLeft{
+	float: left;
+}
 .hideBlock{
 	display: none;
 }
@@ -53,6 +56,11 @@
 #userloginErrorDiv{
 	margin: -5px 0 5px 0;
 }
+/* login page */
+.videoDiv{
+	margin-left: 265px;
+}
+
 
 /* item maintenance jsp */
 .uploadHead{

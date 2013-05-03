@@ -23,6 +23,7 @@ public class SessionFilterServlet implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse res,
 			FilterChain chain) {
 
+		System.out.println("Entered Session filter ...");
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
 		String contextURL = request.getContextPath();
@@ -38,6 +39,8 @@ public class SessionFilterServlet implements Filter {
 				if (null == session) {
 					response.sendRedirect(response.encodeRedirectURL(contextURL + "/index.html") );
 				} else {
+
+					req.getParameterMap().toString();
 					chain.doFilter(req, res);
 				}
 			}

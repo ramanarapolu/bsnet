@@ -3,6 +3,7 @@ package com.jda.bsnet.rest;
 import static javax.ws.rs.core.MediaType.*
 
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
@@ -163,17 +164,22 @@ class LoginResource {
 		return lResp
 	}
 
-	@POST
+	@GET
 	@Timed
 	@Path("logout")
-	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
 
-	Response logOut(@Context HttpServletRequest req) {
+	Response logOut(@Context HttpServletRequest req , @Context  HttpServletResponse res) {
+		
 
-		HttpSession httpSession = req.getSession();
+
+		HttpSession httpSession = req.getSession();	
 		httpSession.removeAttribute("orgName");
-		httpSession.invalidate();
+		httpSession.removeAttribute("userName"); 		
+		httpSession.invalidate();		
+		res.sendRedirect(req.getContextPath());
+		
+		
 		return Response.ok().build()
 	}
 

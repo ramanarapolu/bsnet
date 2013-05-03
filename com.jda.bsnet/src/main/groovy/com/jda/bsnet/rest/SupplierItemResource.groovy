@@ -4,13 +4,11 @@ import static javax.ws.rs.core.MediaType.*
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
-import javax.ws.rs.GET
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.Context
-import javax.ws.rs.core.Response
 
 import net.vz.mongodb.jackson.DBCursor
 import net.vz.mongodb.jackson.DBQuery
@@ -33,7 +31,7 @@ import com.jda.bsnet.uitransfer.JtableResponse
 import com.jda.bsnet.util.BsnetUtils
 import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
-import com.yammer.metrics.annotation.Timed;
+import com.yammer.metrics.annotation.Timed
 
 
 @Path("/supplierItem")
@@ -43,28 +41,32 @@ class SupplierItemResource {
 	@Timed
 	@Path("create")
 	@Produces(APPLICATION_JSON)
-	JtableAddResponse create(@Context HttpServletRequest req) {
-		List<SupplierItem> storeList = new ArrayList()
+	JtableAddResponse create1(@Context HttpServletRequest req) {		
+		
 		try {
+		
+			SupplierItem supItem = new SupplierItem();		
 			HttpSession session = req.getSession();
-			String orgName = session.getAttribute("orgName")
-			SupplierItem supItem = null
-			supItem = new SupplierItem()
+			String orgName = session.getAttribute("orgName")		
 			supItem.item = req.getParameter("item")
 			supItem.orgName = orgName
 			supItem.deliveryWindow = req.getParameter("deliveryWindow")
 			if(req.getParameter("listprice") != null && req.getParameter("listprice")!= "")
 				supItem.promoPrice = Double.parseDouble(req.getParameter("listprice"))
-			DBCursor<Item> item = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).find(DBQuery.is("item",supItem.item))
-			supItem.category = item.current.category
 			
-			storeList.add(supItem)
-			WriteResult<Item, String> result = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).insert(storeList)
-
+				
+			
+			Item item  = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).findOne(DBQuery.is("item",supItem.item))
+			println item
+			if(item!=null)
+			supItem.category = item.category;
+			
+			WriteResult<Item, String> result = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).insert(supItem)//(DBQuery.is("approved",false))		
 			DBCursor<Item> supCur = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).find(DBQuery.is("item",supItem.item))
 			supItem = (SupplierItem) supCur.next();
 
 			return  new JtableAddResponse("OK", supItem)
+
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
