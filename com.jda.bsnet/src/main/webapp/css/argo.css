@@ -9,9 +9,6 @@
 .textBlack{
 	color: #000;
 }
-.textWhite{
-	color: #FFF !important;
-}
 .marginTop10{
 	margin-top: 10px;
 }
@@ -29,9 +26,6 @@
 }
 .hideBlock{
 	display: none;
-}
-.ulstyle{
-	list-style-type: none !important;
 }
 /* footer */
 .footertext{
@@ -62,6 +56,11 @@
 #userloginErrorDiv{
 	margin: -5px 0 5px 0;
 }
+/* login page */
+.videoDiv{
+	margin-left: 265px;
+}
+
 
 /* item maintenance jsp */
 .uploadHead{
@@ -76,22 +75,4 @@
 }
 .uploadWidth{
 	width: 125px;
-}
-
-/* buyer admin market place jsp */
-#navigationMenu{ 
-	width: 270px; 
-}
-.single-menu-item .ui-icon {
-	display: none !important;
-}
-.single-menu-container {
-	display: none !important;
-}
-#menuContent{
-	margin: -300px 0 0 300px;
-}
-.menuLink{
-    background: none repeat scroll 0 0 #2D89EF;
-	color: #FFF;
 }
