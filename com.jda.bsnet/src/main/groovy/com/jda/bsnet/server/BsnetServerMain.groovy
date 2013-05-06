@@ -8,7 +8,7 @@ import com.jda.bsnet.util.JsonUtils
 class BsnetServerMain {
 	public static void main(String[] args) {
 		Properties p = BsnetDatabase.getInstance().getBsnetProp()
-		BsnetServer server = new BsnetServer(JsonUtils.readFromJsonFile(p.getProperty("bsnet.jettyjson.loc"), BsnetServerConfig.class))
+		BsnetServer server = new BsnetServer(JsonUtils.readFromJsonFile(args[0], BsnetServerConfig.class))
 		server.init()
 		try {
 			println "Starting Jetty Web Application..."
