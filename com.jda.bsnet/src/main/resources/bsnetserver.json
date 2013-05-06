@@ -1,13 +1,12 @@
 {
   "host": {
-    "hostName": "api.jda.com",
-    "httpPort": 4080,
-    "httpsPort": 4443,
-    "dbUri": "mongodb://localhost:27017/bsnet"
+    "hostName": "localhost",
+    "httpPort": 8459,
+    "httpsPort": 4443
   },
   "webApps": [
     {
-      "appDir": "./webapp/",
+      "appDir": "./",
       "hostNames": [
         "localhost",
         "api.jda.com"

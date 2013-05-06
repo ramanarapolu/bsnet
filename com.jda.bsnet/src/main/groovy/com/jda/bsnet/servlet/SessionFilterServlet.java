@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.MDC;
+
 
 public class SessionFilterServlet implements Filter {
 
@@ -39,7 +41,6 @@ public class SessionFilterServlet implements Filter {
 				if (null == session) {
 					response.sendRedirect(response.encodeRedirectURL(contextURL + "/index.html") );
 				} else {
-
 					req.getParameterMap().toString();
 					chain.doFilter(req, res);
 				}

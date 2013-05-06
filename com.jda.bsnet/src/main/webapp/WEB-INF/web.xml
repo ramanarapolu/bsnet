@@ -41,6 +41,6 @@
 		<url-pattern>/metrics/*</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
-		<welcome-file>jsp/ArgoMain.jsp</welcome-file>
+		<welcome-file>jsp/argomain.jsp</welcome-file>
 	</welcome-file-list>
 </web-app>

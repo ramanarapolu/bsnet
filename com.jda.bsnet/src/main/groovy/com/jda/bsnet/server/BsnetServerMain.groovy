@@ -12,12 +12,13 @@ class BsnetServerMain {
 		server.init()
 		try {
 			println "Starting Jetty Web Application..."
+
 			server.start()
 			println "BSNET Server Started."
 			while (System.in.available() == 0) {
 				Thread.sleep(5*1000)
 			}
-			server.stop()
+			//server.stop()
 		} catch (Exception e) {
 			e.printStackTrace()
 			System.exit(-1)

@@ -1,9 +1,10 @@
 package com.jda.bsnet.rest;
 
 import static javax.ws.rs.core.MediaType.*
+import groovy.util.logging.Slf4j
 
 import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 import javax.ws.rs.Consumes
 import javax.ws.rs.GET
@@ -17,6 +18,7 @@ import javax.ws.rs.core.Response
 import net.vz.mongodb.jackson.DBQuery
 
 import org.jsoup.nodes.Document
+import org.slf4j.MDC;
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -27,7 +29,7 @@ import com.jda.bsnet.model.User
 import com.jda.bsnet.uitransfer.JtableJson
 import com.jda.bsnet.uitransfer.LoginResponse
 import com.jda.bsnet.uitransfer.MenuUrlPair
-import com.jda.bsnet.uitransfer.ResourceMetricTransfer;
+import com.jda.bsnet.uitransfer.ResourceMetricTransfer
 import com.jda.bsnet.uitransfer.UserDetails
 import com.jda.bsnet.uitransfer.metrics.ResourceMethod
 import com.jda.bsnet.uitransfer.metrics.ResourceMetric
@@ -37,6 +39,7 @@ import com.mongodb.MongoException
 import com.yammer.metrics.annotation.Timed
 
 @Path("/login")
+@Slf4j
 class LoginResource {
 
 
@@ -119,6 +122,8 @@ class LoginResource {
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
 	LoginResponse logOn(@Context HttpServletRequest req ,UserDetails userDetails) {
+
+		log.info 'Entered logOn method'
 		LoginResponse lResp = new LoginResponse()
 		if (userDetails != null) {
 			try {
@@ -142,7 +147,7 @@ class LoginResource {
 							List<MenuUrlPair> menuPairs = getMenusForRole(role)
 							lResp.menuList = menuPairs
 							lResp.loginSuccess = true
-
+							MDC.put("username", user.username)
 							HttpSession session = req.getSession(true);
 							session.setAttribute("orgName", user.orgName)
 							session.setAttribute("userName", user.username)
@@ -170,16 +175,16 @@ class LoginResource {
 	@Produces(APPLICATION_JSON)
 
 	Response logOut(@Context HttpServletRequest req , @Context  HttpServletResponse res) {
-		
 
 
-		HttpSession httpSession = req.getSession();	
+
+		HttpSession httpSession = req.getSession();
 		httpSession.removeAttribute("orgName");
-		httpSession.removeAttribute("userName"); 		
-		httpSession.invalidate();		
+		httpSession.removeAttribute("userName");
+		httpSession.invalidate();
 		res.sendRedirect(req.getContextPath());
-		
-		
+
+
 		return Response.ok().build()
 	}
 

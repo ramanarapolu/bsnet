@@ -42,7 +42,8 @@
 				category: {
 					title: "Category",
 					width: "10%",
-					edit: false
+					edit: false,
+					create: false
 				},			
 				listprice: {
 					title: "Price",

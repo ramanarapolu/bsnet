@@ -17,7 +17,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool
 import org.eclipse.jetty.webapp.WebAppContext
 import org.mortbay.setuid.SetUIDServer
 
-import com.jda.bsnet.server.config.BsnetServerConfig;
+import com.jda.bsnet.server.config.BsnetServerConfig
 import com.jda.bsnet.server.config.WebApp
 
 class BsnetServer {
@@ -70,25 +70,27 @@ class BsnetServer {
 		List<Handler> handlers = new ArrayList<Handler>()
 		config.webApps.each{WebApp webApp ->
 			WebAppContext webAppContext = new WebAppContext()
-			webAppContext.setResourceBase(webApp.appDir)
-			webAppContext.setDescriptor(webApp.appDir
-					+ "/WEB-INF/web.xml")
-			webAppContext.setContextPath(webApp.contextPath)
-			webAppContext.setParentLoaderPriority(true)
-			webAppContext.setVirtualHosts(webApp.hostNames)
-			webAppContext.setConnectorNames([
-				"httpConnector",
-				"httpsConnector"
-			] as String[])
-			SessionHandler sessionHandler = webAppContext
-					.getSessionHandler()
-			SessionManager sessionManager = sessionHandler
-					.getSessionManager()
-			if (sessionManager instanceof AbstractSessionManager) {
-				AbstractSessionManager abstractSessionManager = (AbstractSessionManager) sessionManager
-				abstractSessionManager.setUsingCookies(true)
-				abstractSessionManager.setHttpOnly(true)
-			}
+			 webAppContext.setResourceBase(webApp.appDir)
+			 webAppContext.setAliases(true)
+			 webAppContext.setDescriptor(webApp.appDir
+			 + "/WEB-INF/web.xml")
+			 webAppContext.setContextPath(webApp.contextPath)
+			 webAppContext.setParentLoaderPriority(true)
+			 webAppContext.setVirtualHosts(webApp.hostNames)
+			 webAppContext.setConnectorNames([
+			 "httpConnector",
+			 "httpsConnector"
+			 ] as String[])
+			 SessionHandler sessionHandler = webAppContext
+			 .getSessionHandler()
+			 SessionManager sessionManager = sessionHandler
+			 .getSessionManager()
+			 if (sessionManager instanceof AbstractSessionManager) {
+			 AbstractSessionManager abstractSessionManager = (AbstractSessionManager) sessionManager
+			 abstractSessionManager.setUsingCookies(true)
+			 abstractSessionManager.setHttpOnly(true)
+			 }
+
 			handlers.add(webAppContext)
 		}
 		println handlers

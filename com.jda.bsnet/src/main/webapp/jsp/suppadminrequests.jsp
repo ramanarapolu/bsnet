@@ -1,5 +1,5 @@
 
-<button id="approveBtn" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false"><span class="ui-button-text">Approve all selected records</span></button>
+<button id="approveBtn" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false"><span class="ui-button-text">Send Request To Buyers</span></button>
 <div id="SupplierBuyerRequests" class="marginTop10"></div>
 
 

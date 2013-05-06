@@ -1,11 +1,11 @@
 package com.jda.bsnet.rest
 
 import static javax.ws.rs.core.MediaType.*
+import groovy.util.logging.Slf4j
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import javax.ws.rs.Consumes
-import javax.ws.rs.FormParam
 import javax.ws.rs.GET
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.POST
@@ -37,7 +37,7 @@ import com.yammer.metrics.annotation.Timed
 
 
 @Path("/buyerItem")
-
+@Slf4j
 class BuyerItemResource {
 
 

@@ -20,9 +20,8 @@ import net.vz.mongodb.jackson.DBQuery
 import net.vz.mongodb.jackson.WriteResult
 
 import org.bson.types.ObjectId
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataParam;
-
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition
+import org.glassfish.jersey.media.multipart.FormDataParam
 
 import com.jda.bsnet.csv.CsvBatch
 import com.jda.bsnet.csv.CsvBatchTaskCallable
@@ -34,7 +33,6 @@ import com.jda.bsnet.uitransfer.JtableResponse
 import com.jda.bsnet.util.CsvUtils
 import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
-import com.sun.jersey.core.header.FormDataContentDisposition
 import com.yammer.metrics.annotation.Timed
 
 @Path("/item")
@@ -189,7 +187,7 @@ class ItemResource {
 	}
 
 
-	@POST
+	/*@POST
 	@Timed
 	@Path("/uploadItems")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -236,10 +234,10 @@ class ItemResource {
 			new File(uploadedFileLocation).delete()
 		}
 		return Response.ok().build()
-	}
+	}*/
 
 
-	/*@POST
+	@POST
 	@Path("/uploadItems")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(APPLICATION_JSON)
@@ -282,7 +280,7 @@ class ItemResource {
 			new File(uploadedFileLocation).delete()
 		}
 		return Response.ok().build()
-	}*/
+	}
 
 
 	@POST

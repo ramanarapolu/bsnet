@@ -11,6 +11,8 @@ jar {
 		attributes 'Implementation-Title': 'bsnet', 'Implementation-Version': version
 	}
 }
+
+
 project.ext {
 	groovyVersion = '2.0.6'
 	gparsVersion = '0.+'
@@ -42,7 +44,7 @@ dependencies {
 	//compile ':test'
 	//compile ':jersey-gf-server-1.17.1'
 
-	//compile ':mimepull-1.6'
+	//compile ':tomcat-jasper-7.0.14'
 
 
 	groovy group:'org.codehaus.groovy', name:'groovy-all', version:groovyVersion, transitive:false
@@ -59,6 +61,15 @@ dependencies {
 	compile group:'org.codehaus.gpars', name:'gpars', version:'0.12'
 
 	compile group:'org.eclipse.jetty.aggregate', name:'jetty-all-server', version:jettyVersion, transitive:false
+	//compile group:'org.eclipse.jetty.aggregate', name:'jetty-all', version:jettyVersion, transitive:false
+	compile group:'org.eclipse.jetty.aggregate', name:'jetty-webapp', version:jettyVersion, transitive:false
+	//compile group:'org.eclipse.jetty.aggregate', name:'jetty-servlet', version:jettyVersion, transitive:false
+	compile group:'org.eclipse.jetty', name:'jetty-jsp-2.1', version:'7.5.0.RC2', transitive:false
+	compile group:'org.eclipse.jetty', name:'jetty-util', version:'8.1.0.RC5', transitive:false
+	compile group:'org.mortbay.jetty', name:'jsp-2.1-glassfish', version:'2.1.v20100127', transitive:false
+	compile group:'org.mortbay.jetty', name:'jsp-api-2.1-glassfish', version:'2.1.v20100127', transitive:false
+	compile group:'org.eclipse.jdt.core.compiler', name:'ecj', version:'3.7.2', transitive:false
+
 	compile group:'org.mortbay.jetty', name:'jetty-setuid-java', version:jettyVersion, transitive:false
 	compile group:'org.mortbay.jetty', name:'jetty-setuid', version:jettyVersion, transitive:false
 
@@ -84,6 +95,7 @@ dependencies {
 	compile group:'org.glassfish.jersey.containers', name:'jersey-container-servlet-core', version:jerseyVersion, transitive:false
 	compile group:'org.glassfish.jersey.media', name:'jersey-media-json', version:'2.+', transitive:true
 	compile group:'org.glassfish.jersey.media', name:'jersey-media-json-jackson', version:jerseyVersion, transitive:true
+	compile group:'org.glassfish.jersey.media', name:'jersey-media-multipart', version:jerseyVersion, transitive:true
 	compile group:'org.glassfish.jersey.ext', name:'jersey-servlet-portability', version:jerseyVersion, transitive:false
 
 	compile group:'javax.ws.rs', name:'javax.ws.rs-api', version:jaxRsVersion, transitive:false
@@ -94,9 +106,12 @@ dependencies {
 	testCompile group: 'junit', name: 'junit', version: '4.+'
 	compile group:'org.jsoup', name:'jsoup', version:'1.6.2'
 
+	compile group:'org.apache.tomcat', name:'juli', version:'6.0.26'
+	compile group:'org.apache.tomcat', name:'tomcat-jasper', version:'7.0.14', transitive:false
+	compile group:'org.apache.tomcat.embed', name:'tomcat-embed-core', version:'7.0.14', transitive:false
 
-	compile group:'com.sun.jersey', name:'jersey-bundle', version:'1.17.1'
-	compile group:'com.sun.jersey.contribs', name:'jersey-multipart', version:'1.17.1'
+	//compile group:'com.sun.jersey', name:'jersey-bundle', version:'1.17.1'
+	//compile group:'com.sun.jersey.contribs', name:'jersey-multipart', version:'1.17.1'
 	compile group:'org.jvnet', name:'mimepull', version:'1.6'
 
 }
@@ -148,6 +163,7 @@ jettyRun {
  }
  }
  */
+
 jettyStop {
 	stopKey = 'stopKey'
 	stopPort = 8460
@@ -156,5 +172,11 @@ jettyStop {
 uploadArchives {
 	repositories {
 		flatDir { dirs 'repos' }
+	}
+}
+war {
+	from('conf') {
+		include 'logback.xml'
+		into('src/webapps/WEB-INF/classes')
 	}
 }
