@@ -2,7 +2,8 @@
   "host": {
     "hostName": "localhost",
     "httpPort": 8459,
-    "httpsPort": 4443
+    "httpsPort": 4443,
+    "dbUri":"mongodb://J1013366WIN7DT:27017/bsnet"
   },
   "webApps": [
     {

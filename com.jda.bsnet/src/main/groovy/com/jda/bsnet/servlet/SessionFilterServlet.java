@@ -25,7 +25,6 @@ public class SessionFilterServlet implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse res,
 			FilterChain chain) {
 
-		System.out.println("Entered Session filter ...");
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
 		String contextURL = request.getContextPath();
@@ -39,18 +38,20 @@ public class SessionFilterServlet implements Filter {
 			if (!allowedRequest) {
 				HttpSession session = request.getSession(false);
 				if (null == session) {
-					response.sendRedirect(response.encodeRedirectURL(contextURL + "/index.html") );
+					response.sendRedirect(response.encodeRedirectURL(contextURL + "/jsp/argomain.jsp") );
 				} else {
 					req.getParameterMap().toString();
 					chain.doFilter(req, res);
 				}
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 			PrintWriter writer = getWriter(response);
 			if (writer == null)
 				return;
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch (ServletException e) {
+			e.printStackTrace();
 			PrintWriter writer = getWriter(response);
 			if (writer == null)
 				return;
