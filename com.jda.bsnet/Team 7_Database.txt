@@ -1,8 +1,8 @@
 use bsnet
-db.user.insert({ "_id" : "jdauser", "username" : "jdauser", "password" : "jdauser", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970" })
-db.user.insert({ "_id" : ObjectId("518794ff9d6eb9942f065837"), "username" : "buyeradmin", "password" : "gHLx9+vFPDA0Wkf/QCT5qQdTmhA=", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970", "orgName" : "buyeradmin", "orgAdmin" : true })
-db.user.insert({ "_id" : ObjectId("518797009d6eb9942f065838"), "username" : "buyeruser", "password" : "buyeruser", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970", "orgName" : "buyeradmin", "orgAdmin" : false })
-db.user.insert({ "_id" : ObjectId("518799439d6eb9942f06583a"), "username" : "supplieradmin", "password" : "RMkvrULdtDYF+2fHrxCPicO7ASQ=", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970", "orgName" : "supplieradmin", "orgAdmin" : true })
+db.user.insert({ "_id" : "jdauser", "username" : "jdauser", "password" : "W6ph5Mm5Pz8GgiULbPgzG37mj9g=", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970" })
+db.user.insert({ "_id" : ObjectId("518794ff9d6eb9942f065837"), "username" : "buyeradmin", "password" : "W6ph5Mm5Pz8GgiULbPgzG37mj9g=", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970", "orgName" : "buyeradmin", "orgAdmin" : true })
+db.user.insert({ "_id" : ObjectId("518797009d6eb9942f065838"), "username" : "buyeruser", "password" : "W6ph5Mm5Pz8GgiULbPgzG37mj9g=", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970", "orgName" : "buyeradmin", "orgAdmin" : false })
+db.user.insert({ "_id" : ObjectId("518799439d6eb9942f06583a"), "username" : "supplieradmin", "password" : "W6ph5Mm5Pz8GgiULbPgzG37mj9g=", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970", "orgName" : "supplieradmin", "orgAdmin" : true })
 db.organization.insert({ "_id" : ObjectId("518794ff9d6eb9942f065836"), "orgName" : "buyeradmin", "buyer" : true, "supplier" : false, "address" : { "streetAddress" : "Hi-Tech City", "city" : "Hyderabad", "state" : "AP", "country" : "IN", "postalCode" : "500018" }, "approved" : true })
 db.organization.insert({ "_id" : ObjectId("518799439d6eb9942f065839"), "orgName" : "supplieradmin", "buyer" : false, "supplier" : true, "address" : { "streetAddress" : "Hi-Tech City", "city" : "Hyderabad", "state" : "AP", "country" : "IN", "postalCode" : "500018" }, "approved" : true })
 
