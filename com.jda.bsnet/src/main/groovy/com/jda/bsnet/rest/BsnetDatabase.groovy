@@ -21,7 +21,7 @@ class BsnetDatabase {
 		try {
 			/*bConfig = JsonUtils.readFromJsonFile(jsonPath, BsnetServerConfig.class)
 			MongoURI mongolabUri = new MongoURI(bConfig.host.dbUri)*/
-			InputStream is = BsnetDatabase.class.getResourceAsStream("bsnetserver.properties")
+			InputStream is = BsnetDatabase.class.getResourceAsStream("/bsnetserver.properties")
 			bsnetProp.load(is)
 			MongoURI mongolabUri = new MongoURI(bsnetProp.get("dbUri"))
 			Mongo m = new Mongo(mongolabUri);

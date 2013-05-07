@@ -3,30 +3,25 @@ import javax.servlet.http.HttpServletRequest
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 
-import com.jda.bsnet.model.BuyerItem;
-import com.jda.bsnet.model.Item
-import com.jda.bsnet.model.SupplierItem;
-import com.jda.bsnet.uitransfer.JtableJson
-import com.yammer.metrics.annotation.Timed
-import javax.ws.rs.core.Context
+import static javax.ws.rs.core.MediaType.*
+
 import javax.servlet.http.HttpServletRequest
-import javax.ws.rs.Consumes
-import javax.ws.rs.GET
+import javax.servlet.http.HttpSession
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 import javax.ws.rs.Produces
 import javax.ws.rs.core.Context
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
 
 import net.vz.mongodb.jackson.DBCursor
 import net.vz.mongodb.jackson.DBQuery
-import net.vz.mongodb.jackson.WriteResult
 
-import javax.servlet.http.HttpSession
-
-import static javax.ws.rs.core.MediaType.*
+import com.jda.bsnet.model.BuyerItem
+import com.jda.bsnet.model.Item
+import com.jda.bsnet.model.SupplierItem
+import com.jda.bsnet.util.MetricsUtils
+import com.yammer.metrics.annotation.Timed
+import com.yammer.metrics.core.TimerContext
 
 @Path("/marketPlace")
 class MarketplaceResource {
@@ -37,11 +32,15 @@ class MarketplaceResource {
 	@Produces(APPLICATION_JSON)
 
 	Item  itemDetails(@Context HttpServletRequest req){
+
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.itemDetailsCounter)
 		Item item = null
 		try {
 			item = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).findOne(DBQuery.is("item", req.getParameter("item")))
 		}catch(Exception e){
 			throw new InternalServerErrorException(e)
+		}finally {
+			MetricsUtils.stopTimer(tc)
 		}
 		return  item
 	}
@@ -54,12 +53,15 @@ class MarketplaceResource {
 
 	List categoryList(@Context HttpServletRequest req){
 
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.categoryListCounter)
 		List categoryList = new ArrayList();
 
 		try {
 			categoryList = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).distinct("category")
 		}catch(Exception e){
 			throw new InternalServerErrorException(e)
+		}finally {
+			MetricsUtils.stopTimer(tc)
 		}
 		return  categoryList
 	}
@@ -73,6 +75,8 @@ class MarketplaceResource {
 
 	List getItems(@Context HttpServletRequest req){
 
+
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.getItemsCounter)
 		List<String> BuyerItemsList = null
 		BuyerItem buyerItem = new BuyerItem()
 		HttpSession session = req.getSession()
@@ -116,6 +120,8 @@ class MarketplaceResource {
 
 		}catch(Exception e){
 			throw new InternalServerErrorException(e)
+		}finally {
+			MetricsUtils.stopTimer(tc)
 		}
 		return  suppItemListFiltered
 	}

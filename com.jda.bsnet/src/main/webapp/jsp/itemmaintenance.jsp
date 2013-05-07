@@ -46,7 +46,8 @@
 				},
 				itemName : {
 					title : "Item Name",
-					width : "10%"
+					width : "10%",
+					edit  : false
 				},
 				description : {
 					title : "Description",

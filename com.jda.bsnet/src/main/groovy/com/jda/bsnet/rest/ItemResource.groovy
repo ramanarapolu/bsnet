@@ -31,9 +31,11 @@ import com.jda.bsnet.uitransfer.JtableAddResponse
 import com.jda.bsnet.uitransfer.JtableJson
 import com.jda.bsnet.uitransfer.JtableResponse
 import com.jda.bsnet.util.CsvUtils
+import com.jda.bsnet.util.MetricsUtils
 import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
 import com.yammer.metrics.annotation.Timed
+import com.yammer.metrics.core.TimerContext
 
 @Path("/item")
 @Slf4j
@@ -56,6 +58,8 @@ class ItemResource {
 	@Path("create")
 	@Produces(APPLICATION_JSON)
 	JtableAddResponse createItem(@Context HttpServletRequest req) {
+
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.createItemCounter)
 		Item item = new Item();
 		item.itemName = req.getParameter("itemName")
 		item.description = req.getParameter("description")
@@ -82,6 +86,7 @@ class ItemResource {
 				throw new InternalServerErrorException(e)
 			}
 		}
+		MetricsUtils.stopTimer(tc)
 	}
 
 	@POST
@@ -90,6 +95,7 @@ class ItemResource {
 	@Produces(APPLICATION_JSON)
 	JtableResponse updateItem(@Context HttpServletRequest req) {
 
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.updateItemCounter)
 		Item item = new Item();
 		item._id = req.getParameter("_id")
 		item.itemName = req.getParameter("itemName")
@@ -116,6 +122,7 @@ class ItemResource {
 				throw new InternalServerErrorException(e)
 			}
 
+		MetricsUtils.stopTimer(tc)
 		return  new JtableResponse("OK")
 	}
 
@@ -125,6 +132,7 @@ class ItemResource {
 	@Path("delete")
 	@Produces(APPLICATION_JSON)
 	JtableResponse deleteItem (@Context HttpServletRequest req){
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.deleteItemCounter)
 		Item item = new Item();
 		item._id = req.getParameter("_id")
 		println item._id
@@ -138,10 +146,9 @@ class ItemResource {
 			 BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).remove(document)
 
 		}catch(MongoException e){
-
-				throw new InternalServerErrorException(e)
-			}
-
+			throw new InternalServerErrorException(e)
+		}
+		MetricsUtils.stopTimer(tc)
 		return  new JtableResponse("OK")
 
 	}
@@ -154,6 +161,8 @@ class ItemResource {
 	@Produces(APPLICATION_JSON)
 
 	JtableJson listAll(@Context HttpServletRequest req){
+
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.listAllItemCounter)
 		List<Item> items = null
 		Item item = null
 		int jtStartIndex=0
@@ -182,7 +191,7 @@ class ItemResource {
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
-
+		MetricsUtils.stopTimer(tc)
 	 return  new JtableJson("OK", items,TotalRecordCount)
 	}
 
@@ -243,7 +252,8 @@ class ItemResource {
 	@Produces(APPLICATION_JSON)
 	Response createBulkItems(@FormDataParam("fileToUpload") InputStream uploadedInputStream,
 			@FormDataParam("fileToUpload") FormDataContentDisposition fileDetail) {
-		println "entered file upload function"
+
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.updateItemCounter)
 		String uploadedFileLocation = BsnetDatabase.getInstance().getBsnetProp().getProperty("bsnet.itemfile.loc") + fileDetail.getFileName();
 		saveToFile(uploadedInputStream, uploadedFileLocation);
 		long startTime = System.currentTimeMillis();
@@ -279,6 +289,7 @@ class ItemResource {
 		} finally {
 			new File(uploadedFileLocation).delete()
 		}
+		MetricsUtils.stopTimer(tc)
 		return Response.ok().build()
 	}
 
@@ -289,6 +300,7 @@ class ItemResource {
 	@Produces(APPLICATION_JSON)
 	@Consumes(APPLICATION_JSON)
 	List<SupplierItem> getSuppliers(String itemName) {
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.getSuppliersCounter)
 		List<SupplierItem> suppliers = null
 		SupplierItem supplier = null
 		try {
@@ -302,7 +314,10 @@ class ItemResource {
 			}
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
+		}finally {
+			MetricsUtils.stopTimer(tc)
 		}
+
 		return suppliers
 	}
 

@@ -72,7 +72,7 @@
 								<!-- Password -->
 								<label class="control-label" for="password">Password</label>
 								<div class="controls">
-									<input type="text" id="password" name="password" placeholder=""
+									<input type="password" id="password" name="password" placeholder=""
 										class="input-xlarge">
 								</div>
 							</div>

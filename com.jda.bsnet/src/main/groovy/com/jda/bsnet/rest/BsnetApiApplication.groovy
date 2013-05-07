@@ -10,15 +10,11 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature
 
 @ApplicationPath("bsnet")
 class BsnetApiApplication extends Application {
-
-
 	@Override
 	public Set<Class<?>> getClasses() {
 		final Set<Class<?>> classes = new HashSet<Class<?>>();
-
 		//classes.add(MultiPartReaderServerSide.class)
 		//classes.add(MimeMultipartProvider.class);
-
 		//classes.add(MultiPartWriter.class)
 		classes.add(MultiPartFeature.class);
 		classes.add(LoginResource.class);
@@ -32,7 +28,6 @@ class BsnetApiApplication extends Application {
 		//classes.add(InstrumentedResourceMethodDispatchAdapter.class);
 		return classes;
 	}
-
 	/*@Context
 	public void setServletContext(ServletConfig context) {
 		System.out.println("servlet context set here" + context.getServletName());
@@ -43,7 +38,6 @@ class BsnetApiApplication extends Application {
 	public void readInitParams() {
 		//System.out.println(sc.getInitParameter("appconfig"));
 	}*/
-
 	@Override
 	public Set<Object> getSingletons() {
 		final Set<Object> instances = new HashSet<Object>();

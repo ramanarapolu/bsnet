@@ -12,8 +12,10 @@
 			},
 			fields : {
 				orgName : {
+					key : true,
 					title : "Organization",
-					width : "20%"
+					width : "20%",
+					edit : false
 				},
 				buyer : {
 					title : "Buyer",

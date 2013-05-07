@@ -1,8 +1,56 @@
 use bsnet
 db.user.insert({ "_id" : "jdauser", "username" : "jdauser", "password" : "jdauser", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970" })
-db.user.insert({ "_id" : "buyer", "username" : "buyer", "password" : "buyer", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970"  "orgName" : "buyer", "orgAdmin" : true })
-db.user.insert({ "_id" : "buyeruser", "username" : "buyeruser", "password" : "buyeruser", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970"  "orgName" : "buyer", "orgAdmin" : false })
-db.user.insert({ "_id" : "supplier", "username" : "supplier", "password" : "supplier", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970"  "orgName" : "supplier", "orgAdmin" : true })
+db.user.insert({ "_id" : ObjectId("518794ff9d6eb9942f065837"), "username" : "buyeradmin", "password" : "gHLx9+vFPDA0Wkf/QCT5qQdTmhA=", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970", "orgName" : "buyeradmin", "orgAdmin" : true })
+db.user.insert({ "_id" : ObjectId("518797009d6eb9942f065838"), "username" : "buyeruser", "password" : "buyeruser", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970", "orgName" : "buyeradmin", "orgAdmin" : false })
+db.user.insert({ "_id" : ObjectId("518799439d6eb9942f06583a"), "username" : "supplieradmin", "password" : "RMkvrULdtDYF+2fHrxCPicO7ASQ=", "emailId" : "ramana.rapolu@jda.com", "mobileNo" : "9989861970", "orgName" : "supplieradmin", "orgAdmin" : true })
+db.organization.insert({ "_id" : ObjectId("518794ff9d6eb9942f065836"), "orgName" : "buyeradmin", "buyer" : true, "supplier" : false, "address" : { "streetAddress" : "Hi-Tech City", "city" : "Hyderabad", "state" : "AP", "country" : "IN", "postalCode" : "500018" }, "approved" : true })
+db.organization.insert({ "_id" : ObjectId("518799439d6eb9942f065839"), "orgName" : "supplieradmin", "buyer" : false, "supplier" : true, "address" : { "streetAddress" : "Hi-Tech City", "city" : "Hyderabad", "state" : "AP", "country" : "IN", "postalCode" : "500018" }, "approved" : true })
+
+
+db.item.insert([
+{ "_id" : ObjectId("51879bcc9d6ec10bb74aae0c"), "itemName" : "bmw", "description" : "BMW Open Top", "price" : 2500000, "category" : "cars" },
+{ "_id" : ObjectId("51879bcc9d6ec10bb74aae0d"), "itemName" : "audi", "description" : "Beautiful Audi Car", "price" : 2500000, "category" : "cars" },
+{ "_id" : ObjectId("51879bcc9d6ec10bb74aae0e"), "itemName" : "benz", "description" : "Mercedes C Class", "price" : 1500000, "category" : "cars" },
+{ "_id" : ObjectId("51879bcc9d6ec10bb74aae0f"), "itemName" : "renault", "description" : "Renault Duster", "price" : 1600000, "category" : "cars" },
+{ "_id" : ObjectId("51879bcc9d6ec10bb74aae10"), "itemName" : "porsche", "description" : "Amazing Porsche", "price" : 5000000, "category" : "cars" },
+{ "_id" : ObjectId("51879bcc9d6ec10bb74aae11"), "itemName" : "exelero", "description" : "MayBach Exelero", "price" : 40000000, "category" : "cars" },
+{ "_id" : ObjectId("51879bcc9d6ec10bb74aae12"), "itemName" : "ferrari", "description" : "Ferrari 599 GTB Fiorano", "price" : 35700000, "category" : "cars" },
+{ "_id" : ObjectId("51879bcc9d6ec10bb74aae13"), "itemName" : "aston", "description" : " Aston Martin Vanquish", "price" : 38500000, "category" : "cars" }
+])
+
+db.supplieritem.insert([
+{ "_id" : ObjectId("5187a3c49d6e522eb0f5ea19"), "orgName" : "supplieradmin", "item" : "bmw", "promoPrice" : 2, "deliveryWindow" : "2 - 3 days", "category" : "cars" },
+{ "_id" : ObjectId("5187a42f9d6e522eb0f5ea1a"), "orgName" : "supplieradmin", "item" : "audi", "promoPrice" : 4, "deliveryWindow" : "2 - 3 days", "category" : "cars" },
+{ "_id" : ObjectId("5187a44b9d6e522eb0f5ea1b"), "orgName" : "supplieradmin", "item" : "benz", "promoPrice" : 7, "deliveryWindow" : "2 - 3 days", "category" : "cars" },
+{ "_id" : ObjectId("5187a4699d6e522eb0f5ea1c"), "orgName" : "supplieradmin", "item" : "renault", "promoPrice" : 5, "deliveryWindow" : "3 - 4 days", "category" : "cars" },
+{ "_id" : ObjectId("5187a4779d6e522eb0f5ea1d"), "orgName" : "supplieradmin", "item" : "porsche", "promoPrice" : 8, "deliveryWindow" : "2 - 3 days", "category" : "cars" },
+{ "_id" : ObjectId("5187a4859d6e522eb0f5ea1e"), "orgName" : "supplieradmin", "item" : "exelero", "promoPrice" : 5, "deliveryWindow" : "10 - 13 days", "category" : "cars" },
+{ "_id" : ObjectId("5187a48c9d6e522eb0f5ea1f"), "orgName" : "supplieradmin", "item" : "ferrari", "promoPrice" : 12, "deliveryWindow" : "10 - 13 days", "category" : "cars" },
+{ "_id" : ObjectId("5187a4949d6e522eb0f5ea20"), "orgName" : "supplieradmin", "item" : "aston", "promoPrice" : 1, "deliveryWindow" : "10 - 13 days", "category" : "cars" }
+])
+
+db.buyeritem.insert([
+{ "_id" : ObjectId("5187a5cb9d6e522eb0f5ea21"), "orgName" : "buyeradmin", "item" : "bmw" },
+{ "_id" : ObjectId("5187a5d19d6e522eb0f5ea22"), "orgName" : "buyeradmin", "item" : "audi" },
+{ "_id" : ObjectId("5187a5d49d6e522eb0f5ea23"), "orgName" : "buyeradmin", "item" : "benz" },
+{ "_id" : ObjectId("5187a5da9d6e522eb0f5ea24"), "orgName" : "buyeradmin", "item" : "renault" },
+{ "_id" : ObjectId("5187a5dd9d6e522eb0f5ea25"), "orgName" : "buyeradmin", "item" : "porsche" },
+{ "_id" : ObjectId("5187a5e09d6e522eb0f5ea26"), "orgName" : "buyeradmin", "item" : "exelero" },
+{ "_id" : ObjectId("5187a5e29d6e522eb0f5ea27"), "orgName" : "buyeradmin", "item" : "ferrari" },
+{ "_id" : ObjectId("5187a5e59d6e522eb0f5ea28"), "orgName" : "buyeradmin", "item" : "aston" }
+])
+
+db.bsrelation.insert([
+{ "_id" : ObjectId("5187a5ee9d6e522eb0f5ea29"), "supplier" : "supplieradmin", "buyer" : "buyeradmin", "item" : "bmw" },
+{ "_id" : ObjectId("5187a5f29d6e522eb0f5ea2a"), "supplier" : "supplieradmin", "buyer" : "buyeradmin", "item" : "audi" },
+{ "_id" : ObjectId("5187a6009d6e522eb0f5ea2b"), "supplier" : "supplieradmin", "buyer" : "buyeradmin", "item" : "benz" },
+{ "_id" : ObjectId("5187a6039d6e522eb0f5ea2c"), "supplier" : "supplieradmin", "buyer" : "buyeradmin", "item" : "renault" },
+{ "_id" : ObjectId("5187a6079d6e522eb0f5ea2d"), "supplier" : "supplieradmin", "buyer" : "buyeradmin", "item" : "porsche" },
+{ "_id" : ObjectId("5187a60d9d6e522eb0f5ea2e"), "supplier" : "supplieradmin", "buyer" : "buyeradmin", "item" : "exelero" },
+{ "_id" : ObjectId("5187a6119d6e522eb0f5ea2f"), "supplier" : "supplieradmin", "buyer" : "buyeradmin", "item" : "ferrari" },
+{ "_id" : ObjectId("5187a6149d6e522eb0f5ea30"), "supplier" : "supplieradmin", "buyer" : "buyeradmin", "item" : "aston" }
+])
+
 db.menumetadata.insert({"menuId":"admin_home","menuName":"Home","menuUrl":"/bsnet/jsp/orgapproval.jsp","roleList":["jdaadmin"]})
 db.menumetadata.insert({"menuId":"admin_item","menuName":"App Maintenance","menuUrl":"/bsnet/jsp/appmaintain.jsp","roleList":["jdaadmin"]})
 db.menumetadata.insert({"menuId":"admin_upload","menuName":"Upload Data","menuUrl":"/bsnet/jsp/itemmaintenance.jsp","roleList":["jdaadmin"]})

@@ -25,9 +25,11 @@ import com.jda.bsnet.uitransfer.JtableJson
 import com.jda.bsnet.uitransfer.JtableResponse
 import com.jda.bsnet.uitransfer.UserAndOrg
 import com.jda.bsnet.util.BsnetUtils
+import com.jda.bsnet.util.MetricsUtils
 import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
 import com.yammer.metrics.annotation.Timed
+import com.yammer.metrics.core.TimerContext
 
 @Path("/user")
 class UserResource {
@@ -48,6 +50,8 @@ class UserResource {
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
 	UserAndOrg createOrgAndUser(UserAndOrg userOrgDetails) {
+
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.createOrgAndUserCounter)
 		Organization org = null
 		User user = null
 		if (userOrgDetails != null)
@@ -102,6 +106,9 @@ class UserResource {
 			{
 				e.printStackTrace()
 				throw new InternalServerErrorException(e)
+			}finally {
+
+				MetricsUtils.stopTimer(tc)
 			}
 		}
 	}
@@ -111,6 +118,8 @@ class UserResource {
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
 	Response createUser(@Context HttpServletRequest req,User userDetails) {
+
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.createUserCounter)
 		if (userDetails != null)
 		{
 			try
@@ -131,6 +140,9 @@ class UserResource {
 			catch(MongoException e)
 			{
 				throw new InternalServerErrorException(e)
+			}finally {
+
+				MetricsUtils.stopTimer(tc)
 			}
 		}
 		return Response.ok().build()
@@ -144,6 +156,7 @@ class UserResource {
 	@Produces(APPLICATION_JSON)
 
 	JtableJson getPendingOrgs(){
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.getPendingOrgsCounter)
 		List<Organization> orgs = null
 		Organization org = null
 		try {
@@ -158,6 +171,9 @@ class UserResource {
 			}
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
+		}finally {
+
+				MetricsUtils.stopTimer(tc)
 		}
 		return  new JtableJson("OK", orgs)
 	}
@@ -194,6 +210,7 @@ class UserResource {
 	@Path("approveOrgs1")
 	@Produces(APPLICATION_JSON)
 	JtableResponse updateOrgs1(@Context HttpServletRequest req) {
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.approveOrgsCounter)
 		println "enterd updateOrgs1" + req.getParameter("orgName")
 		try {
 			BasicDBObject source = new BasicDBObject("orgName",req.getParameter("orgName"));
@@ -203,6 +220,9 @@ class UserResource {
 		}catch(MongoException e){
 
 			throw new InternalServerErrorException(e)
+		}finally {
+
+				MetricsUtils.stopTimer(tc)
 		}
 
 		return  new JtableResponse("OK")
@@ -215,7 +235,7 @@ class UserResource {
 	@Consumes(APPLICATION_JSON)
 	@Produces(APPLICATION_JSON)
 	List<User> getUserByOrgs(@Context HttpServletRequest req) {
-
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.getUserByOrgCounter)
 		HttpSession session = req.getSession()
 		String orgName = session.getAttribute("orgName")
 		System.out.println("organization name :"+orgName);
@@ -231,6 +251,7 @@ class UserResource {
 				}
 			}
 		}
+		MetricsUtils.stopTimer(tc)
 		return users
 	}
 

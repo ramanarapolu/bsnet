@@ -31,9 +31,11 @@ import com.jda.bsnet.uitransfer.JtableJson
 import com.jda.bsnet.uitransfer.JtableOptions
 import com.jda.bsnet.uitransfer.JtableOptionsResponse
 import com.jda.bsnet.uitransfer.JtableResponse
+import com.jda.bsnet.util.MetricsUtils
 import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
 import com.yammer.metrics.annotation.Timed
+import com.yammer.metrics.core.TimerContext
 
 
 @Path("/buyerItem")
@@ -46,6 +48,8 @@ class BuyerItemResource {
 	@Path("createBuyerUser")
 	@Produces(APPLICATION_JSON)
 	JtableAddResponse createBuyerUser(@Context HttpServletRequest req) {
+
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.createBuyerUserCounter)
 		User user = new User();
 
 		user.username = req.getParameter("username")
@@ -75,6 +79,7 @@ class BuyerItemResource {
 				throw new InternalServerErrorException(e)
 			}
 		}
+		MetricsUtils.stopTimer(tc)
 	}
 
 	@POST
@@ -84,6 +89,7 @@ class BuyerItemResource {
 	@Produces(APPLICATION_JSON)
 
 	JtableJson buyerUserlistAll(@Context HttpServletRequest req){
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.buyerUserlistAllCounter)
 		List<User> users = null
 		User user = null
 		String orgName =  req.getSession().getAttribute("orgName")
@@ -112,7 +118,7 @@ class BuyerItemResource {
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
-
+		MetricsUtils.stopTimer(tc)
 	 return  new JtableJson("OK", users,users.size())
 	}
 
@@ -122,6 +128,7 @@ class BuyerItemResource {
 	@Produces(APPLICATION_JSON)
 	JtableResponse buyerUserUpdate(@Context HttpServletRequest req) {
 
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.buyerUserUpdateCounter)
 		User user = new User();
 		user._id = req.getParameter("_id")
 		user.username = req.getParameter("username")
@@ -146,6 +153,7 @@ class BuyerItemResource {
 				throw new InternalServerErrorException(e)
 			}
 
+			MetricsUtils.stopTimer(tc)
 		return  new JtableResponse("OK")
 	}
 
@@ -154,6 +162,7 @@ class BuyerItemResource {
 	@Path("buyerUserDelete")
 	@Produces(APPLICATION_JSON)
 	JtableResponse buyerUserDelete (@Context HttpServletRequest req){
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.buyerUserDeleteCounter)
 		User user = new User();
 		user._id = req.getParameter("_id")
 
@@ -171,6 +180,7 @@ class BuyerItemResource {
 				throw new InternalServerErrorException(e)
 			}
 
+		MetricsUtils.stopTimer(tc)
 		return  new JtableResponse("OK")
 
 	}
@@ -183,11 +193,13 @@ class BuyerItemResource {
 	@Produces(APPLICATION_JSON)
 	@Consumes(APPLICATION_JSON)
 	Response storeByerItems() {
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.storeBuyerItemsCounter)
 		try {
 			BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).insert(supItems)//(DBQuery.is("approved",false))
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
+		MetricsUtils.stopTimer(tc)
 		return Response.ok().build()
 	}
 
@@ -196,6 +208,7 @@ class BuyerItemResource {
 	@Path("getBuyerItems")
 	@Produces(APPLICATION_JSON)
 	List<SupplierItem> getBuyerItems() {
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.getBuyerItemsCounter)
 		List<SupplierItem> suppliers = null
 		SupplierItem supplier = null
 		try {
@@ -210,6 +223,7 @@ class BuyerItemResource {
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
+		MetricsUtils.stopTimer(tc)
 		return suppliers
 	}
 
@@ -218,7 +232,7 @@ class BuyerItemResource {
 	@Path("approve")
 	@Produces(APPLICATION_JSON)
 	Response approveRelation(@Context HttpServletRequest req) {
-
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.approveCounter)
 		String itemName = req.getParameter("item")
 		String buyerOrg = req.getParameter("buyerOrg")
 		String buyerOrg_id = req.getParameter("id")
@@ -240,6 +254,7 @@ class BuyerItemResource {
 			e.printStackTrace()
 			throw new InternalServerErrorException(e)
 		}
+		MetricsUtils.stopTimer(tc)
 		return Response.ok().build()
 	}
 
@@ -250,6 +265,7 @@ class BuyerItemResource {
 	@Produces(APPLICATION_JSON)
 
 	JtableJson buyerItemlistAll(@Context HttpServletRequest req){
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.buyerItemlistAllCounter)
 		List<User> buyers = null
 		BuyerItem buyerItem = null
 		String orgName =  req.getSession().getAttribute("orgName")
@@ -278,7 +294,7 @@ class BuyerItemResource {
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
-
+		MetricsUtils.stopTimer(tc)
 	 return  new JtableJson("OK", buyers,buyers.size())
 	}
 
@@ -290,6 +306,7 @@ class BuyerItemResource {
 		@Produces(APPLICATION_JSON)
 		JtableAddResponse buyerItemCreate(@Context HttpServletRequest req) {
 
+			TimerContext tc = MetricsUtils.startTimer(MetricsUtils.buyerItemCreateCounter )
 			try {
 				HttpSession session = req.getSession();
 				String orgName = session.getAttribute("orgName")
@@ -313,7 +330,10 @@ class BuyerItemResource {
 			}catch(MongoException e){
 				throw new InternalServerErrorException(e)
 
+			}finally {
+				MetricsUtils.stopTimer(tc)
 			}
+
 		}
 
 		@POST
@@ -322,6 +342,7 @@ class BuyerItemResource {
 		@Produces(APPLICATION_JSON)
 		JtableResponse buyerItemDelete (@Context HttpServletRequest req){
 			//deleting from database
+			TimerContext tc = MetricsUtils.startTimer(MetricsUtils.buyerItemDeleteCounter)
 			try{
 
 
@@ -333,6 +354,7 @@ class BuyerItemResource {
 			}catch(MongoException e){
 				throw new InternalServerErrorException(e)
 			}
+			MetricsUtils.stopTimer(tc)
 			return  new JtableResponse("OK")
 		}
 
@@ -344,6 +366,7 @@ class BuyerItemResource {
 		@Produces(APPLICATION_JSON)
 		JtableOptionsResponse optionsList(@Context HttpServletRequest req) {
 
+			TimerContext tc = MetricsUtils.startTimer(MetricsUtils.optionListCounter)
 			List<JtableOptions> result = new ArrayList()
 			try {
 				HttpSession session = req.getSession();
@@ -376,6 +399,8 @@ class BuyerItemResource {
 
 			}catch(MongoException e){
 				throw new InternalServerErrorException(e)
+			}finally {
+				MetricsUtils.stopTimer(tc)
 			}
 			return new JtableOptionsResponse("OK", result)
 		}
@@ -388,6 +413,7 @@ class BuyerItemResource {
 		@Produces(APPLICATION_JSON)
 
 		JtableJson buyerItemSupplierList(@Context HttpServletRequest req){
+			TimerContext tc = MetricsUtils.startTimer(MetricsUtils.buyerItemSupplierListCounter)
 			List<BsRelation> suppliers = null
 			BsRelation bsRelation = null
 			String orgName =  req.getSession().getAttribute("orgName")
@@ -412,7 +438,8 @@ class BuyerItemResource {
 				throw new InternalServerErrorException(e)
 			}
 
-		 return  new JtableJson("OK", suppliers)
+			MetricsUtils.stopTimer(tc)
+			return  new JtableJson("OK", suppliers)
 		}
 
 
@@ -422,6 +449,7 @@ class BuyerItemResource {
 		@Produces(APPLICATION_JSON)
 		JtableAddResponse buyerItemSupplierCreate(@Context HttpServletRequest req) {
 
+			TimerContext tc = MetricsUtils.startTimer(MetricsUtils.buyerItemSupplierCreateCounter)
 			try {
 				HttpSession session = req.getSession();
 				String orgName = session.getAttribute("orgName")
@@ -452,6 +480,8 @@ class BuyerItemResource {
 			}catch(MongoException e){
 				throw new InternalServerErrorException(e)
 
+			}finally {
+				MetricsUtils.stopTimer(tc)
 			}
 		}
 
@@ -464,6 +494,8 @@ class BuyerItemResource {
 		@Produces(APPLICATION_JSON)
 		JtableResponse buyerItemSupplierDelete (@Context HttpServletRequest req){
 			//deleting from database
+
+			TimerContext tc = MetricsUtils.startTimer(MetricsUtils.buyerItemSupplierDeleteCounter)
 			try{
 
 
@@ -474,6 +506,8 @@ class BuyerItemResource {
 
 			}catch(MongoException e){
 				throw new InternalServerErrorException(e)
+			}finally {
+				MetricsUtils.stopTimer(tc)
 			}
 			return  new JtableResponse("OK")
 		}
@@ -487,6 +521,7 @@ class BuyerItemResource {
 		@Produces(APPLICATION_JSON)
 		JtableOptionsResponse optionsListSupplier(@Context HttpServletRequest req) {
 
+			TimerContext tc = MetricsUtils.startTimer(MetricsUtils.optionsListSupplierCounter)
 			List<JtableOptions> result = new ArrayList()
 			try {
 				HttpSession session = req.getSession();
@@ -531,6 +566,8 @@ class BuyerItemResource {
 
 			}catch(MongoException e){
 				throw new InternalServerErrorException(e)
+			}finally {
+				MetricsUtils.stopTimer(tc)
 			}
 			return new JtableOptionsResponse("OK", result)
 		}
