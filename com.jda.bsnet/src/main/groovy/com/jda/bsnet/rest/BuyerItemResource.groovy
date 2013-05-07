@@ -36,6 +36,7 @@ import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
 import com.yammer.metrics.annotation.Timed
 import com.yammer.metrics.core.TimerContext
+import com.jda.bsnet.util.BsnetUtils
 
 
 @Path("/buyerItem")
@@ -53,7 +54,7 @@ class BuyerItemResource {
 		User user = new User();
 
 		user.username = req.getParameter("username")
-		user.password = req.getParameter("password")
+		user.password = BsnetUtils.encrypt(req.getParameter("password"))
 		user.emailId = req.getParameter("emailId")
 		user.mobileNo = req.getParameter("mobileNo")
 		user.orgName = req.getSession().getAttribute("orgName")
