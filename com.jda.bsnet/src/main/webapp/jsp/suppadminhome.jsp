@@ -1,1 +1,1 @@
-hello from supp admin page
+No Pending orders!!

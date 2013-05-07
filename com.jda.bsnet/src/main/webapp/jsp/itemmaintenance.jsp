@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="css/ajaxfileupload.css" />
+<!-- <link rel="stylesheet" type="text/css" href="css/ajaxfileupload.css" /> -->
 
 <div id="uploadDataFromFiles">
 	<span class="floatright">

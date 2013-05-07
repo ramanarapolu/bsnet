@@ -7,4 +7,5 @@ class SupplierItem {
 	double promoPrice
 	String deliveryWindow
 	String category
+	String description
 }

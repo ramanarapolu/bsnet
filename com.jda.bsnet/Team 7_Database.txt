@@ -19,14 +19,14 @@ db.item.insert([
 ])
 
 db.supplieritem.insert([
-{ "_id" : ObjectId("5187a3c49d6e522eb0f5ea19"), "orgName" : "supplieradmin", "item" : "bmw", "promoPrice" : 2, "deliveryWindow" : "2 - 3 days", "category" : "cars" },
-{ "_id" : ObjectId("5187a42f9d6e522eb0f5ea1a"), "orgName" : "supplieradmin", "item" : "audi", "promoPrice" : 4, "deliveryWindow" : "2 - 3 days", "category" : "cars" },
-{ "_id" : ObjectId("5187a44b9d6e522eb0f5ea1b"), "orgName" : "supplieradmin", "item" : "benz", "promoPrice" : 7, "deliveryWindow" : "2 - 3 days", "category" : "cars" },
-{ "_id" : ObjectId("5187a4699d6e522eb0f5ea1c"), "orgName" : "supplieradmin", "item" : "renault", "promoPrice" : 5, "deliveryWindow" : "3 - 4 days", "category" : "cars" },
-{ "_id" : ObjectId("5187a4779d6e522eb0f5ea1d"), "orgName" : "supplieradmin", "item" : "porsche", "promoPrice" : 8, "deliveryWindow" : "2 - 3 days", "category" : "cars" },
-{ "_id" : ObjectId("5187a4859d6e522eb0f5ea1e"), "orgName" : "supplieradmin", "item" : "exelero", "promoPrice" : 5, "deliveryWindow" : "10 - 13 days", "category" : "cars" },
-{ "_id" : ObjectId("5187a48c9d6e522eb0f5ea1f"), "orgName" : "supplieradmin", "item" : "ferrari", "promoPrice" : 12, "deliveryWindow" : "10 - 13 days", "category" : "cars" },
-{ "_id" : ObjectId("5187a4949d6e522eb0f5ea20"), "orgName" : "supplieradmin", "item" : "aston", "promoPrice" : 1, "deliveryWindow" : "10 - 13 days", "category" : "cars" }
+{ "_id" : ObjectId("5188a9df9d6ef09e89443597"), "orgName" : "supplieradmin", "item" : "bmw", "promoPrice" : 2, "deliveryWindow" : "2 - 3 days", "category" : "cars", "description" : "BMW Open Top" },
+{ "_id" : ObjectId("5188a9fc9d6ef09e89443598"), "orgName" : "supplieradmin", "item" : "audi", "promoPrice" : 3, "deliveryWindow" : "2 - 3 days", "category" : "cars", "description" : "Beautiful Audi Car" },
+{ "_id" : ObjectId("5188aa079d6ef09e89443599"), "orgName" : "supplieradmin", "item" : "benz", "promoPrice" : 5, "deliveryWindow" : "2 - 3 days", "category" : "cars", "description" : "Mercedes C Class" },
+{ "_id" : ObjectId("5188aa0f9d6ef09e8944359a"), "orgName" : "supplieradmin", "item" : "renault", "promoPrice" : 1, "deliveryWindow" : "2 - 3 days", "category" : "cars", "description" : "Renault Duster" },
+{ "_id" : ObjectId("5188aa399d6ef09e8944359b"), "orgName" : "supplieradmin", "item" : "porsche", "promoPrice" : 9, "deliveryWindow" : "3 - 7 days", "category" : "cars", "description" : "Amazing Porsche" },
+{ "_id" : ObjectId("5188aa5a9d6ef09e8944359c"), "orgName" : "supplieradmin", "item" : "exelero", "promoPrice" : 7, "deliveryWindow" : "3 - 7 days", "category" : "cars", "description" : "MayBach Exelero" },
+{ "_id" : ObjectId("5188aa609d6ef09e8944359d"), "orgName" : "supplieradmin", "item" : "ferrari", "promoPrice" : 6, "deliveryWindow" : "3 - 7 days", "category" : "cars", "description" : "Ferrari 599 GTB Fiorano" },
+{ "_id" : ObjectId("5188aa6e9d6ef09e8944359e"), "orgName" : "supplieradmin", "item" : "aston", "promoPrice" : 11, "deliveryWindow" : "12 - 25 days", "category" : "cars", "description" : " Aston Martin Vanquish" }
 ])
 
 db.buyeritem.insert([

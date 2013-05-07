@@ -4,48 +4,48 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#MetricsContainer').jtable({
-			title : 'Organizations for Approval',
+			title : 'App Metrics',
 			actions : {
-				listAction : 'bsnet/user/getPendingOrgs',
+				listAction : 'bsnet/login/getResourceStats',
 				//updateAction : 'bsnet/user/approveOrgs1'
 			},
 			fields : {
 				className : {
 					//key : true,
-					title : "className",
+					title : "Class Name",
 					width : "20%",
 					
 				},
 					methodName : {
-					title : "methodName",
+					title : "Method Name",
 					width : "10%",
 					
 				},
 					
 					avgResTime : {
-					title : "avgResTime",
+					title : "Avg ResTime",
 					width : "10%",
 					
 				},
 					count : {
-					title : "count",
+					title : "Count",
 					width : "10%",
 					
 				},
 
 					oneMinRate : {
-					title : "oneMinRate",
+					title : "One MinRate",
 					width : "10%",
 					
 				},
 					fiveMinRate : {
-					title : "fiveMinRate",
+					title : "Five MinRate",
 					width : "10%",
 					
 				},
 
 					meanRate : {
-					title : "meanRate",
+					title : "Mean Rate",
 					width : "10%",
 					
 				},

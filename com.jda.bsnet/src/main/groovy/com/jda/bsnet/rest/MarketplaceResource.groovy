@@ -27,7 +27,7 @@ import com.yammer.metrics.core.TimerContext
 @Path("/marketPlace")
 class MarketplaceResource {
 
-	@POST
+	@GET
 	@Timed
 	@Path("itemDetails")
 	@Produces(APPLICATION_JSON)
@@ -69,13 +69,12 @@ class MarketplaceResource {
 
 
 
-	@GET
+	@POST
 	@Timed
 	@Path("getItems")
 	@Produces(APPLICATION_JSON)
 
 	List getItems(@Context HttpServletRequest req){
-
 
 		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.getItemsCounter)
 		List<String> BuyerItemsList = null
@@ -98,9 +97,7 @@ class MarketplaceResource {
 				}
 			}
 
-
 			// Get all supplier items
-
 			DBCursor<SupplierItem> suppItemCur  = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).find()
 			if(suppItemCur != null) {
 				suppItemList = new ArrayList()
@@ -118,7 +115,6 @@ class MarketplaceResource {
 					suppItemListFiltered.add(x)
 				}
 			}
-
 		}catch(Exception e){
 			throw new InternalServerErrorException(e)
 		}finally {

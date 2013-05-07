@@ -211,54 +211,16 @@ var argoJS  =   {
 
 	/* create tile object in the market place */
 	createTileObj: function(obj){
-		$("#menuContent").append("<div id ='"+obj.itemName+"' data-mode='flip' data-delay='2000'></div>");
-		$("#"+obj.itemName).addClass("blue").addClass("live-tile");
+		$("#menuContent").append("<div id ='"+obj.item+"' data-mode='flip' data-delay='2000'></div>");
+		$("#"+obj.item).addClass("blue").addClass("live-tile");
 
-		$('<div/>',{id: obj.itemName+'_div1'}).appendTo('#'+obj.itemName);
-		var img = $('<img />').attr({ 'id': 'img_'+obj.itemName, 'src':'/bsnet/img/products/'+obj.itemName+'.jpg', 'alt':obj.itemName}).appendTo($('#'+obj.itemName+'_div1'));
-		$('#'+obj.itemName+'_div1').append('<span class="tile-title">'+obj.itemName+'</span>');
+		$('<div/>',{id: obj.item+'_div1'}).appendTo('#'+obj.item);
+		var img = $('<img />').attr({ 'id': 'img_'+obj.item, 'src':'/bsnet/img/products/'+obj.item+'.jpg', 'alt':obj.item}).appendTo($('#'+obj.item+'_div1'));
+		$('#'+obj.item+'_div1').append('<span class="tile-title">'+obj.item+'</span>');
 
-		$('<div/>',{id: obj.itemName+'_div2'}).appendTo('#'+obj.itemName);
-		var img = $('<img />').attr({ 'id': 'img_'+obj.itemName, 'src': '/bsnet/css/images/1pixel.gif', 'alt':obj.itemName }).appendTo($('#'+obj.itemName+'_div2'));
-		$('#'+obj.itemName+'_div2').append('<span class="tile-title"> Description: '+obj.description+'</span><br/>').append('<p> Price: '+obj.price+'</p>');
-	},
-
-	/* get details about the selected item */
-	createSelectedPage: function(sel_id){
-		console.log("id.."+sel_id);
-/*		$.ajax({
-			url: "/bsnet/bsnet/marketPlace/itemDetails",
-			type: "POST",
-			dataType : "json",
-			data: sel_id,
-			success : function(data) {
-				resp = data;
-			},
-			error : function(errMsg) {
-				alert(errMsg);
-				argoJS.argoErrorCallBack(errMsg);
-			}
-		}); */
-	 var item = {"itemName":"audi","description":"Beautiful Audi Car","price":2500000,"category":"cars"};
-		return item; 
-	},
-
-	/* obtain the category list from the sever */
-	getCategories: function( ){
-		var resp = [ ];
-		$.ajax({
-			url: "/bsnet/bsnet/marketPlace/categoryList",
-			type: "POST",
-			dataType : "json",
-			success : function(data) {
-				resp = data;
-			},
-			error : function(errMsg) {
-				alert(errMsg);
-				argoJS.argoErrorCallBack(errMsg);
-			}
-		});
-		return resp;
+		$('<div/>',{id: obj.item+'_div2'}).appendTo('#'+obj.item);
+		var img = $('<img />').attr({ 'id': 'img_'+obj.item, 'src': '/bsnet/css/images/1pixel.gif', 'alt':obj.item }).appendTo($('#'+obj.item+'_div2'));
+		$('#'+obj.item+'_div2').append('<span class="tile-title"> Supplier: '+obj.orgName+'</span><br/>').append('<div class="font14"> Price: '+obj.promoPrice+'</div>').append('<div class="font14"> Delivery: '+obj.deliveryWindow+'</div>').append('<div class="font14"> Description: '+obj.description+'</div>');
 	}
 }
 
@@ -311,57 +273,59 @@ $(document).ready(function() {
 
 	/* display categories from server */
 	$(document).on("click",".category", function( ){
-		// var categories = argoJS.getCategories( );
-		// comment the above line and uncomment the below in case the ajax response does not come
-		var categories = ["cars"];
-		console.log("categories.." + categories);
 		$("#category_div").append("<ul class='ulstyle'></ul>");
-		$.each(categories, function(key, val){
-			$("#category_div ul").append('<li><input type="radio" name="'+val+'">'+val+'</input></li>');
+		$.getJSON("/bsnet/bsnet/marketPlace/categoryList", function(data){
+			console.log("categories" + data);
+			$.each(data, function (key,val){
+				$("#category_div ul").append('<li><input type="radio" name="'+val+'">'+val+'</input></li>');
+			});
 		});
 	});
 	
 	/* on click of show button on market place */
 	$(document).on("click", "#displayChoice", function() {
-		var resp = [ ];
-	/*	$('#navForm').submit(function(){
-			var request = $.ajax({
-				url: "/bsnet/bsnet/marketPlace/getItems",
-				type: "POST",
-				dataType: "application/json; charset=utf-8"
-			});
-
-			request.done(function(msg) {
-				resp = msg;
-			});
-
-			request.fail(function(jqXHR, textStatus) {
-				argoJS.argoErrorCallBack(textStatus);
-			});
-		}); */
-
-		var resp = [
-		{ "itemName" : "bmw","description" : "BMW Open Top", "price" : 2500000, "category" : "cars"},
-		{ "itemName" : "audi","description" : "Beautiful Audi Car", "price" : 2500000, "category" : "cars"},
-		{ "itemName" : "benz","description" : "Mercedes C Class", "price" : 1500000, "category" : " cars"},
-		{ "itemName" : "renault","description" : "Renault Duster", "price" : 1600000, "category" : " cars"},
-		{ "itemName" : "porsche","description" : "Amazing Porsche", "price" : 5000000, "category" : " cars"},
-		{ "itemName" : "exelero","description" : "MayBach Exelero", "price" : 40000000, "category" : " cars"},
-		{ "itemName" : "ferrari","description" : "Ferrari 599 GTB Fiorano", "price" : 35700000, "category" : " cars"},
-		{ "itemName" : "aston","description" : "Aston Martin Vanquish", "price" : 38500000, "category" : " cars"},
-		];		
-		$.each(resp,function(idx,obj){
-			argoJS.createTileObj(obj);
+		$.ajax({
+			url: "/bsnet/bsnet/marketPlace/getItems",
+			type: "POST",
+			dataType : "json",
+			success : function(data) {
+				$.each(data, function (idx,obj){
+					console.log(obj);
+					argoJS.createTileObj(obj);
+				});
+				$(".live-tile").not(".exclude").liveTile();
+			},
+			error : function(errMsg) {
+				alert(errMsg);
+				argoJS.argoErrorCallBack(errMsg);
+			}
 		});
-		$(".live-tile").not(".exclude").liveTile();
 	});
+
 	/* on selection of a particular item */
-	$(document).on("click",".live-tile", function(){
-		var sel_id = $(this).attr("id");
+	$(document).on("click",".live-tile", function(e){
+		/* var sel_id = $(this).attr("id");
+		var suppname =	($('#'+sel_id+'_div2').find('.tile-title').html()).split(':')[1];
+		console.log(suppname);
 		$("div#menuContent").empty( );
-		var item = argoJS.createSelectedPage(sel_id);
-		console.log("response...."+item);
-		$("#menuContent").append("<div id='sel_item'><span id='sel_img'></span><span><div>Description: "+item.description+"</div><div>Price: Rs."+item.price+"</div></span>");
-		var img = $('<img />').attr({ 'id': 'img_'+item.itemName, 'src':'/bsnet/img/products/'+item.itemName+'.jpg', 'alt':item.itemName}).appendTo($('#sel_img'));
+		$.getJSON("/bsnet/bsnet/marketPlace/itemDetails",{item: sel_id, orgName: suppname} function (resp){
+			console.log(resp);
+			$("#menuContent").append("<div id='sel_item'><span id='sel_img'></span><span><div>Description: "+item.description+"</div><div>Price: Rs."+item.price+"</div></span>");
+			var img = $('<img />').attr({ 'id': 'img_'+item.itemName, 'src':'/bsnet/img/products/'+item.itemName+'.jpg', 'alt':item.itemName}).appendTo($('#sel_img'));
+		}); */
+		e.preventDefault( );
+		$(".argoAlert").removeClass("hideBlock");		
+	});
+
+	/* on click of reset button */
+	$(document).on("click","#resetChoice", function( ){
+		$("div#menuContent").empty( );
+		$("div#category_div").empty( );
+	});
+
+	/* on click of close button */
+	$(document).on("click",".argoClose", function(e){
+		e.preventDefault( );
+		$(".argoAlert").addClass("hideBlock");
 	});
 });

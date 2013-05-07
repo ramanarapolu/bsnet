@@ -59,6 +59,7 @@ class SupplierItemResource {
 				supItem.promoPrice = Double.parseDouble(req.getParameter("listprice"))
 			Item item  = BsnetDatabase.getInstance().getJacksonDBCollection(Item.class).findOne(DBQuery.is("itemName",supItem.item))
 			supItem.category = item.category;
+			supItem.description = item.description; 
 
 			WriteResult<Item, String> result = BsnetDatabase.getInstance().getJacksonDBCollection(SupplierItem.class).insert(supItem)
 
