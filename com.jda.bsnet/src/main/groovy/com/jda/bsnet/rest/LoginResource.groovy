@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response
 import net.vz.mongodb.jackson.DBQuery
 
 import org.jsoup.nodes.Document
-import org.slf4j.MDC;
+import org.slf4j.MDC
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -34,16 +34,16 @@ import com.jda.bsnet.uitransfer.UserDetails
 import com.jda.bsnet.uitransfer.metrics.ResourceMethod
 import com.jda.bsnet.uitransfer.metrics.ResourceMetric
 import com.jda.bsnet.util.JsoupUtils
+import com.jda.bsnet.util.MetricsUtils
 import com.jda.bsnet.util.RoleDef
 import com.mongodb.MongoException
 import com.yammer.metrics.annotation.Timed
+import com.yammer.metrics.core.TimerContext
+import com.jda.bsnet.util.BsnetUtils
 
 @Path("/login")
 @Slf4j
 class LoginResource {
-
-
-
 
 	@GET
 	@Path("hello")
@@ -52,8 +52,6 @@ class LoginResource {
 	String getHello(){
 		return "Hello"
 	}
-
-
 
 	@POST
 	@Path("getResourceNames")
@@ -70,11 +68,8 @@ class LoginResource {
 		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true)
 		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
 		Map<String,ResourceMetric> rm = objectMapper.readValue(doc.getElementsByTag("body").text(), Map.class)
-
 		return new JtableJson("OK", rm.keySet().asList())
 	}
-
-
 
 	@POST
 	@Path("getResourceStatsByName")
@@ -115,6 +110,41 @@ class LoginResource {
 		return new JtableJson("OK", lTrans)
 	}
 
+	@POST
+	@Path("getResourceStats")
+	@Consumes(APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
+	//Example URL:  http://api.jda.com/reco/v1/users/hello
+	JtableJson getResourceStats(@Context HttpServletRequest req){
+
+		List<ResourceMetricTransfer> lTrans = new ArrayList<ResourceMetricTransfer>()
+		Properties p = BsnetDatabase.getInstance().getBsnetProp()
+		String url = "http://"+p.getProperty("bsnet.server.ip")+":"+p.getProperty("bsnet.server.port")+"/bsnet/metrics/metrics?pretty=true"
+		Document doc = JsoupUtils.getContent(url)
+		ObjectMapper objectMapper = new ObjectMapper()
+		objectMapper.registerModule(new JodaModule())
+		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true)
+		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+		Map<String,ResourceMetric> rm = objectMapper.readValue(doc.getElementsByTag("body").text(), Map.class)
+		for(c in rm) {
+			//ResourceMetric rmByName =
+			Map<String,ResourceMethod> rMap = rm.get(c.key)
+			ResourceMetricTransfer ltransEle = null
+			for(e in rMap) {
+				ltransEle = new ResourceMetricTransfer()
+				ltransEle.className = c.key
+				ltransEle.methodName = e.key
+				ltransEle.avgResTime = e.value.duration.mean
+				ltransEle.count = e.value.rate.count
+				ltransEle.oneMinRate = e.value.rate.m1
+				ltransEle.fiveMinRate = e.value.rate.m5
+				ltransEle.meanRate = e.value.rate.mean
+				lTrans.add(ltransEle)
+			}
+		}
+
+		return new JtableJson("OK", lTrans)
+	}
 
 	@POST
 	@Timed
@@ -123,15 +153,17 @@ class LoginResource {
 	@Produces(APPLICATION_JSON)
 	LoginResponse logOn(@Context HttpServletRequest req ,UserDetails userDetails) {
 
-		log.info 'Entered logOn method'
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.logOnCounter)
+		MDC.put("username", userDetails.username)
+		log.info("Entered logOn method")
 		LoginResponse lResp = new LoginResponse()
 		if (userDetails != null) {
 			try {
 				User user = BsnetDatabase.getInstance().getJacksonDBCollection(User.class).findOne(DBQuery.is("username",userDetails.username))
 				if(user != null) {
 					//TODO Hashing of the password
-					//if(user.password.equals(BsnetUtils.encrypt(userDetails.password))) {
-					if(true) {
+					if(user.password.equals(BsnetUtils.encrypt(userDetails.password)) || req.getSession()?.getAttribute("userName")!= null ) {
+						//if(true) {
 						String role = determineRole(user)
 						if(!role.equals(RoleDef.JDA_ADMIN)) {
 							boolean orgApproved = isOrgApproved(user)
@@ -147,7 +179,7 @@ class LoginResource {
 							List<MenuUrlPair> menuPairs = getMenusForRole(role)
 							lResp.menuList = menuPairs
 							lResp.loginSuccess = true
-							MDC.put("username", user.username)
+							log.debug("${user.username} User login success")
 							HttpSession session = req.getSession(true);
 							session.setAttribute("orgName", user.orgName)
 							session.setAttribute("userName", user.username)
@@ -164,8 +196,13 @@ class LoginResource {
 
 			}catch(MongoException e){
 				throw new InternalServerErrorException(e)
+			}finally {
+
+				MetricsUtils.stopTimer(tc)
 			}
+
 		}
+		log.info("Leaving logOn method for user ${userDetails.username}")
 		return lResp
 	}
 
@@ -176,15 +213,17 @@ class LoginResource {
 
 	Response logOut(@Context HttpServletRequest req , @Context  HttpServletResponse res) {
 
-
+		TimerContext tc = MetricsUtils.startTimer(MetricsUtils.logOutCounter)
 
 		HttpSession httpSession = req.getSession();
+		log.info("Entered logOut method for user ${httpSession.getAttribute("userName")}")
 		httpSession.removeAttribute("orgName");
 		httpSession.removeAttribute("userName");
 		httpSession.invalidate();
 		res.sendRedirect(req.getContextPath());
 
-
+		MetricsUtils.stopTimer(tc)
+		log.info("Leaving logOut Method")
 		return Response.ok().build()
 	}
 
@@ -201,6 +240,7 @@ class LoginResource {
 		}
 	}
 	String determineRole(User user) {
+
 		String result = null
 		try{
 			if(user.orgName == null) {
@@ -217,6 +257,7 @@ class LoginResource {
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
+		log.debug("User ${user.username} is associated with the role ${result}")
 		return result
 	}
 
@@ -237,6 +278,7 @@ class LoginResource {
 		}catch(MongoException e){
 			throw new InternalServerErrorException(e)
 		}
+		log.debug("Returning menus for role ${role} are ${result}")
 		return result
 	}
 
