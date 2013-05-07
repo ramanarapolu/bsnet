@@ -7,6 +7,7 @@ import static javax.ws.rs.core.MediaType.*
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
+import javax.ws.rs.GET
 import javax.ws.rs.InternalServerErrorException
 import javax.ws.rs.POST
 import javax.ws.rs.Path
@@ -46,7 +47,7 @@ class MarketplaceResource {
 	}
 
 
-	@POST
+	@GET
 	@Timed
 	@Path("categoryList")
 	@Produces(APPLICATION_JSON)
@@ -68,7 +69,7 @@ class MarketplaceResource {
 
 
 
-	@POST
+	@GET
 	@Timed
 	@Path("getItems")
 	@Produces(APPLICATION_JSON)
