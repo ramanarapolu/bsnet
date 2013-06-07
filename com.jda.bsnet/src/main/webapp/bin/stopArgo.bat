@@ -1,0 +1,1 @@
+FOR /F "tokens=1,2 delims= " %%G IN ('jps -l') DO IF /I "%%H" == "com.jda.bsnet.server.BsnetServerMain" taskkill /F /PID %%G

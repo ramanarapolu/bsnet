@@ -1,16 +1,16 @@
 {
   "host": {
     "hostName": "localhost",
-    "httpPort": 8459,
+    "httpPort": @PORT@,
     "httpsPort": 4443,
-    "dbUri":"mongodb://J1013366WIN7DT:27017/bsnet"
+    "dbUri":"mongodb://@DBIP@:27017/bsnet"
   },
   "webApps": [
     {
       "appDir": "./",
       "hostNames": [
         "localhost",
-        "api.jda.com"
+        "jdapdar.jdadelivers.com"
       ],
       "contextPath": "/bsnet"
     }
@@ -30,7 +30,7 @@
     "accessLogTimeZone": "GMT+5:30",
     "accessLogEnabled": true,
     "accessLogFileName": "access.log",
-    "accessLogDirectory": "logs/access",
+    "accessLogDirectory": "logs/",
     "statsOn": true,
     "accessLogAppend": true,
     "accessLogRetainDays": 2,
@@ -50,7 +50,7 @@
     "httpsResponseHeaderSize": 8192
   },
   "mailConfig":{
-   	"smtpHost" : "hydergw.jda.com",
+   	"smtpHost" : "@MAIL_SERVER_IP@",
    	"smtpPort" : "",
    	"approveSub": "Request For Approval",
    	"approveBody" : "Dear USER,<BR><BR> Greetings from ARGO Team.<BR><BR>You've shown intrest on below items Portal.<BR><BR><BR>Please click the link below to confirm the relation.<BR>",

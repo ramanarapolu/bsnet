@@ -87,6 +87,8 @@ var argoJS  =   {
 
 		request.done(function(msg) {
 			argoJS.loginCallBack(msg);
+			$("div#argofooter").empty( );
+			$("div#argofooter").load("jsp/footer.jsp");
 		});
 
 		request.fail(function(jqXHR, textStatus) {
@@ -119,11 +121,33 @@ var argoJS  =   {
 			contentType : "application/json; charset=utf-8",
 			dataType : "json",
 			success : function(data) {
-				$("#userSuccess").removeClass("invisible");
+				argoJS.resetForm();
+				if(data.success === false){
+					$("#userError").empty().html(data.failedReason).removeClass("invisible");
+				}else {
+					$("#userSuccess").removeClass("invisible");
+				}
 			},
 			error : function(errMsg) {
 				alert(errMsg);
 				$("#userError").removeClass("invisible");
+			}
+		});
+	},
+	
+	/* reset form objects after submit */
+	resetForm: function(){
+		$('#regisForm').each(function(){
+			this.reset();
+		});
+		$('#regisForm').find('input').each(function(){
+			if($(this).hasClass('valid')){
+				$(this).removeClass('valid');
+			}
+		});
+		$('#regisForm').find('label').each(function(){
+			if($(this).hasClass('valid')){
+				$(this).removeClass('valid');
 			}
 		});
 	},
@@ -254,12 +278,6 @@ $(document).ready(function() {
 		}
 	});
 
-	/* Call on click of submit button in the registration page */
-	$("#regisForm").submit(function() {
-		argoJS.submitRegistration( );
-		return false;
-	});
-
 	/* action to be invoked on click of the  menu */
 	$(document).on("click", ".menuclick", function() {
 		argoJS.createBodyDiv();
@@ -314,6 +332,7 @@ $(document).ready(function() {
 			var img = $('<img />').attr({ 'id': 'img_'+item.itemName, 'src':'/bsnet/img/products/'+item.itemName+'.jpg', 'alt':item.itemName}).appendTo($('#sel_img'));
 		}); */
 		e.preventDefault( );
+		$("#argoAlertDiv").html('<strong>Item has been added to cart.</strong><a class="argoClose" href="#">&times;</a>');		
 		$(".argoAlert").removeClass("hideBlock");		
 	});
 
@@ -327,5 +346,13 @@ $(document).ready(function() {
 	$(document).on("click",".argoClose", function(e){
 		e.preventDefault( );
 		$(".argoAlert").addClass("hideBlock");
+	});
+	
+	/* on click of place order button */
+	$(document).on("click","#placeOrder",function(e){
+		e.preventDefault( );
+		$("#argoAlertDiv").empty();
+		$("#argoAlertDiv").html("<strong>Your order has been placed!!</strong><a class='argoClose' href='#'>&times;</a>");
+		$(".argoAlert").removeClass("hideBlock");
 	});
 });

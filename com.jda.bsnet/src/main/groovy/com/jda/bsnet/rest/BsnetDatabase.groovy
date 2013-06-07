@@ -1,6 +1,7 @@
 package com.jda.bsnet.rest;
 import net.vz.mongodb.jackson.JacksonDBCollection
 
+
 import com.jda.bsnet.server.config.BsnetServerConfig
 import com.jda.bsnet.util.JsonUtils
 import com.mongodb.DB
@@ -50,6 +51,14 @@ class BsnetDatabase {
 
 	public BsnetServerConfig getBsnetServerJsonConfig(){
 		return bConfig
+	}
+
+	public static void main(String[] args) {
+
+		BsnetDatabase inst = BsnetDatabase.getInstance()
+		new File(args[0]).eachLine {line->
+			mongoDB.command(line);
+		}
 	}
 
 }

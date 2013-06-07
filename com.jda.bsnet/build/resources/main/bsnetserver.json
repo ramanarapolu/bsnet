@@ -30,7 +30,7 @@
     "accessLogTimeZone": "GMT+5:30",
     "accessLogEnabled": true,
     "accessLogFileName": "access.log",
-    "accessLogDirectory": "logs/access",
+    "accessLogDirectory": "logs/",
     "statsOn": true,
     "accessLogAppend": true,
     "accessLogRetainDays": 2,
