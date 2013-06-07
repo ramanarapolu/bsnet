@@ -1,0 +1,1 @@
+db.menumetadata.insert({"menuId":"admin_upload_supplier","menuName":"Upload Data","menuUrl":"/bsnet/jsp/itemmaintenancesupp.jsp","roleList":["supadmin"]})
